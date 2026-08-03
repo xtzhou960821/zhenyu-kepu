@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>珍羽的科学星球 · 太阳系探秘</title>
+<style>
+  :root{
+    --bg:#050816;
+    --bg2:#0a0f2c;
+    --card:rgba(255,255,255,0.05);
+    --card-border:rgba(255,255,255,0.12);
+    --txt:#e7ecff;
+    --muted:#8fa3d4;
+    --cyan:#22d3ee;
+    --blue:#3b82f6;
+    --purple:#a78bfa;
+    --gold:#fbbf24;
+    --green:#34d399;
+    --pink:#f472b6;
+    --radius:18px;
+    --glow:0 0 25px rgba(34,211,238,0.25);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:"PingFang SC","Microsoft YaHei","Helvetica Neue",Arial,sans-serif;
+    background:radial-gradient(1200px 800px at 70% -10%, #1b2a6b 0%, transparent 60%),
+               radial-gradient(900px 600px at 0% 100%, #2b1a5e 0%, transparent 55%),
+               var(--bg);
+    color:var(--txt);
+    min-height:100vh;
+    overflow-x:hidden;
+    line-height:1.7;
+  }
+  /* 星尘背景 */
+  #stars{position:fixed;inset:0;z-index:0;pointer-events:none}
+  .wrap{position:relative;z-index:1}
+
+  /* 顶部导航 */
+  header{
+    position:sticky;top:0;z-index:50;
+    backdrop-filter:blur(14px);
+    background:rgba(5,8,22,0.7);
+    border-bottom:1px solid var(--card-border);
+  }
+  .nav{max-width:1100px;margin:0 auto;padding:14px 22px;display:flex;align-items:center;gap:20px}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;letter-spacing:.5px}
+  .logo .orb{width:22px;height:22px;border-radius:50%;
+    background:radial-gradient(circle at 30% 30%, #fff, var(--gold) 40%, #f97316 70%);
+    box-shadow:0 0 14px rgba(251,191,36,.8)}
+  .nav-links{display:flex;gap:8px;margin-left:auto;flex-wrap:wrap}
+  .nav-links button{
+    background:transparent;border:1px solid transparent;color:var(--muted);
+    padding:8px 16px;border-radius:30px;font-size:14px;cursor:pointer;transition:.25s;
+    font-family:inherit;
+  }
+  .nav-links button:hover{color:#fff;background:var(--card)}
+  .nav-links button.active{color:#fff;border-color:var(--cyan);background:rgba(34,211,238,.12);box-shadow:var(--glow)}
+
+  main{max-width:1100px;margin:0 auto;padding:36px 22px 80px}
+
+  /* Hero */
+  .hero{text-align:center;padding:34px 10px 10px}
+  .hero .kicker{display:inline-block;padding:6px 16px;border-radius:30px;font-size:13px;
+    background:linear-gradient(90deg,rgba(59,130,246,.2),rgba(167,139,250,.2));
+    border:1px solid var(--card-border);color:var(--cyan);margin-bottom:18px;letter-spacing:2px}
+  .hero h1{font-size:clamp(30px,5vw,48px);font-weight:800;
+    background:linear-gradient(120deg,#7dd3fc,#a78bfa,#f9a8d4);
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+    margin-bottom:12px}
+  .hero .greet{font-size:clamp(16px,2.5vw,20px);color:var(--muted)}
+  .hero .greet b{color:var(--gold);font-weight:700}
+  .hero .desc{max-width:640px;margin:16px auto 8px;color:var(--muted);font-size:15px}
+
+  /* 主题卡片区 */
+  .topics{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;margin:34px 0}
+  .t-card{
+    position:relative;padding:24px;border-radius:var(--radius);
+    background:var(--card);border:1px solid var(--card-border);
+    transition:.3s;cursor:pointer;overflow:hidden;
+  }
+  .t-card:hover{transform:translateY(-6px);border-color:var(--cyan);box-shadow:var(--glow)}
+  .t-card .emoji{font-size:40px;margin-bottom:12px;display:block}
+  .t-card h3{font-size:18px;margin-bottom:6px}
+  .t-card p{font-size:13px;color:var(--muted)}
+  .t-card .tag{position:absolute;top:16px;right:16px;font-size:11px;padding:4px 10px;border-radius:20px;
+    background:rgba(52,211,153,.15);color:var(--green);border:1px solid rgba(52,211,153,.3)}
+  .t-card .tag.soon{background:rgba(143,163,212,.12);color:var(--muted);border-color:var(--card-border)}
+
+  /* 内容卡片 */
+  .lesson{
+    background:var(--card);border:1px solid var(--card-border);
+    border-radius:var(--radius);padding:clamp(22px,4vw,40px);margin-bottom:26px;
+    animation:fadeIn .5s ease;
+  }
+  @keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+  .lesson h2{font-size:clamp(22px,3vw,30px);margin-bottom:8px;
+    background:linear-gradient(90deg,#7dd3fc,#a78bfa);
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .lesson h2 .no{color:var(--cyan);-webkit-text-fill-color:var(--cyan);margin-right:10px}
+  .lesson .sub{color:var(--muted);margin-bottom:22px;font-size:14px}
+  .lesson h3{font-size:18px;margin:22px 0 8px;color:#dbe6ff}
+  .lesson p{color:var(--txt);opacity:.9;margin-bottom:12px;font-size:15.5px}
+  .lesson .hl{color:var(--cyan);font-weight:600}
+  .lesson .hl-gold{color:var(--gold);font-weight:600}
+  .lesson ul{margin:8px 0 16px 22px}
+  .lesson li{margin-bottom:8px;font-size:15px;opacity:.92}
+  .lesson li b{color:var(--cyan)}
+
+  .grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+  .fact{background:rgba(255,255,255,.04);border:1px solid var(--card-border);border-radius:14px;padding:16px}
+  .fact .t{font-size:13px;color:var(--cyan);margin-bottom:6px;letter-spacing:1px}
+  .fact p{font-size:14px;opacity:.9}
+
+  .callout{border-left:4px solid var(--gold);background:rgba(251,191,36,.08);
+    padding:14px 18px;border-radius:10px;margin:18px 0;font-size:15px}
+  .callout.blue{border-color:var(--cyan);background:rgba(34,211,238,.08)}
+
+  /* 行星轨道动画区 */
+  .solar-box{
+    background:radial-gradient(circle at 50% 50%, #131a3a 0%, #070b1e 70%);
+    border:1px solid var(--card-border);border-radius:var(--radius);
+    padding:20px;margin:26px 0;position:relative;overflow:hidden;min-height:420px;
+  }
+  .solar-box .sun{
+    position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+    width:54px;height:54px;border-radius:50%;z-index:2;
+    background:radial-gradient(circle at 35% 35%, #fffbe6, #ffd54d 45%, #ff9800 75%, #e65100);
+    box-shadow:0 0 40px 12px rgba(255,180,60,.6);
+  }
+  .orbit{position:absolute;left:50%;top:50%;border-radius:50%;
+    border:1px dashed rgba(255,255,255,.15);
+    transform:translate(-50%,-50%);animation:orbit linear infinite;}
+  @keyframes orbit{
+    from{transform:translate(-50%,-50%) rotate(0deg)}
+    to{transform:translate(-50%,-50%) rotate(360deg)}
+  }
+  .planet{position:absolute;border-radius:50%;left:50%;top:-2px;}
+  .planet .lbl{position:absolute;top:-22px;left:50%;transform:translateX(-50%);
+    font-size:11px;color:#cfe3ff;white-space:nowrap;opacity:.9}
+
+  /* 测验 */
+  .quiz-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:18px}
+  .quiz-head .info{font-size:14px;color:var(--muted)}
+  .score-pill{background:linear-gradient(90deg,rgba(34,211,238,.2),rgba(167,139,250,.2));
+    padding:8px 18px;border-radius:30px;font-weight:700;font-size:15px;border:1px solid var(--card-border)}
+  .q{display:none}
+  .q.on{display:block;animation:fadeIn .4s}
+  .q .q-title{font-size:19px;font-weight:700;margin-bottom:20px;color:#eef3ff}
+  .q .q-title .qn{color:var(--cyan);margin-right:8px}
+  .opts{display:grid;gap:12px}
+  .opt{text-align:left;background:rgba(255,255,255,.04);border:1px solid var(--card-border);
+    padding:14px 18px;border-radius:12px;color:var(--txt);font-size:15.5px;cursor:pointer;
+    transition:.2s;font-family:inherit}
+  .opt:hover{border-color:var(--cyan);background:rgba(34,211,238,.08)}
+  .opt.correct{border-color:var(--green);background:rgba(52,211,153,.14)}
+  .opt.wrong{border-color:var(--pink);background:rgba(244,114,182,.14)}
+  .opt:disabled{cursor:default}
+  .feedback{margin-top:16px;padding:14px 18px;border-radius:12px;font-size:15px;display:none}
+  .feedback.show{display:block}
+  .feedback.ok{background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.3)}
+  .feedback.no{background:rgba(244,114,182,.12);border:1px solid rgba(244,114,182,.3)}
+  .q-actions{margin-top:20px;display:flex;gap:12px;flex-wrap:wrap}
+  .btn{background:linear-gradient(120deg,var(--cyan),var(--blue));color:#fff;border:none;
+    padding:12px 26px;border-radius:30px;font-size:15px;font-weight:600;cursor:pointer;
+    transition:.25s;font-family:inherit;box-shadow:0 4px 18px rgba(59,130,246,.35)}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(59,130,246,.5)}
+  .btn.ghost{background:transparent;border:1px solid var(--card-border);color:var(--muted);box-shadow:none}
+  .btn.ghost:hover{color:#fff;border-color:var(--muted)}
+  .btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+
+  /* 结果页 */
+  #result{display:none;text-align:center;padding:30px 10px}
+  #result.on{display:block;animation:fadeIn .6s}
+  .big-score{font-size:clamp(60px,12vw,96px);font-weight:800;
+    background:linear-gradient(120deg,#34d399,#22d3ee,#a78bfa);
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;line-height:1}
+  .result-title{font-size:26px;font-weight:800;margin:16px 0 6px}
+  .result-sub{color:var(--muted);font-size:16px;max-width:520px;margin:0 auto 24px}
+  .stars{font-size:34px;margin:8px 0 16px;letter-spacing:6px}
+
+  footer{text-align:center;color:var(--muted);font-size:13px;padding:30px 20px 50px;
+    border-top:1px solid var(--card-border);margin-top:40px}
+  footer .love{color:var(--pink)}
+
+  @media(max-width:560px){
+    .nav{flex-wrap:wrap;gap:10px}
+    .nav-links{margin-left:0;width:100%;justify-content:flex-start}
+    .solar-box{min-height:320px}
+  }
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="wrap">
+
+<header>
+  <div class="nav">
+    <div class="logo"><span class="orb"></span>珍羽的科学星球</div>
+    <div class="nav-links">
+      <button class="active" data-tab="home">🏠 首页</button>
+      <button data-tab="solar">🌞 太阳系</button>
+      <button data-tab="quiz">📝 自我检测</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- 首页 -->
+  <section id="tab-home" class="tabpane">
+    <div class="hero">
+      <span class="kicker">✨ 镇海中学初中部台州分校 · 欢迎新同学</span>
+      <h1>太阳系探秘</h1>
+      <p class="greet">周珍羽，欢迎来到你的科学星球 🌍</p>
+      <p class="desc">这是一堂属于你的趣味科学课。我们从太阳系开始，看看这个庞大的宇宙家园是怎么运转的，然后通过自我检测，检验你的收获！</p>
+    </div>
+
+    <div class="topics">
+      <div class="t-card" onclick="go('solar')">
+        <span class="emoji">🌞</span>
+        <span class="tag">已上线</span>
+        <h3>太阳系运行原理</h3>
+        <p>认识八大行星，理解引力和轨道，探索太阳系运转的奥秘。</p>
+      </div>
+      <div class="t-card" onclick="go('quiz')">
+        <span class="emoji">📝</span>
+        <span class="tag">已上线</span>
+        <h3>自我检测</h3>
+        <p>做几道题，看看你对太阳系了解多少，还能拿到分数哦！</p>
+      </div>
+      <div class="t-card" onclick="soon()">
+        <span class="emoji">🚀</span>
+        <span class="tag soon">敬请期待</span>
+        <h3>恒星的一生</h3>
+        <p>恒星是怎么诞生、燃烧、最后演化的？下次更新见！</p>
+      </div>
+      <div class="t-card" onclick="soon()">
+        <span class="emoji">🪐</span>
+        <span class="tag soon">敬请期待</span>
+        <h3>黑洞与引力</h3>
+        <p>连光都逃不掉的怪物，到底有多神秘？</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 太阳系课程 -->
+  <section id="tab-solar" class="tabpane" style="display:none">
+    <div class="lesson">
+      <h2><span class="no">01</span>太阳系是什么？</h2>
+      <p class="sub">先建立一个整体认识</p>
+      <p>太阳系（Solar System）是以<span class="hl">太阳</span>为中心，以及所有被太阳引力束缚的天体组成的大家庭。它主要包括：</p>
+      <div class="grid-2">
+        <div class="fact"><div class="t">☀️ 一颗恒星</div><p>太阳——太阳系唯一的恒星，占整个太阳系质量的 <b>99.86%</b>，是绝对的"家长"。</p></div>
+        <div class="fact"><div class="t">🪐 八大行星</div><p>按离太阳远近：水星、金星、地球、火星、木星、土星、天王星、海王星。</p></div>
+        <div class="fact"><div class="t">💫 矮行星</div><p>冥王星等，个头比行星小，但也在绕着太阳转。</p></div>
+        <div class="fact"><div class="t">☄️ 其他天体</div><p>小行星带、卫星、彗星、柯伊伯带等。</p></div>
+      </div>
+      <div class="callout blue">💡 <b>记忆口诀</b>：<b>水金地火、木土天海</b>——离太阳从近到远。小技巧：可以记成"水金地火木土天海"，谐音想象成"水金地火，木土天海"。</div>
+    </div>
+
+    <div class="lesson">
+      <h2><span class="no">02</span>为什么行星绕着太阳转？</h2>
+      <p class="sub">核心问题：引力与惯性</p>
+      <p>这是理解太阳系的关键。行星之所以不会飞走、也不会撞向太阳，是因为两个力量的<span class="hl">"拔河"</span>：</p>
+      <ul>
+        <li><b>万有引力</b>（牛顿发现）：质量越大，引力越强。太阳质量超大，所以把行星往自己这边"拉"。</li>
+        <li><b>惯性</b>：行星原本想沿直线往前飞，但引力不断把它"拽弯"。</li>
+      </ul>
+      <p>结果就是：行星既不掉进太阳，也不飞走，而是在一个<span class="hl-gold">弯曲的轨道</span>上不断绕圈——就像用绳子拴着一块石头甩圈一样。</p>
+      <div class="callout">🧠 <b>想一想</b>：如果把"甩绳子"的手（引力）突然松开，石头（行星）会怎样？——它会沿着切线方向飞出去！</div>
+    </div>
+
+    <div class="lesson">
+      <h2><span class="no">03</span>开普勒三大定律</h2>
+      <p class="sub">行星轨道的数学之美</p>
+      <p>德国天文学家<span class="hl">开普勒</span>通过观察，总结出行星运动的三大定律：</p>
+      <ul>
+        <li><b>第一定律（椭圆轨道）</b>：行星绕太阳的轨道是<span class="hl">椭圆</span>，太阳位于椭圆的一个焦点上。所以行星离太阳有时近、有时远。</li>
+        <li><b>第二定律（面积速度相等）</b>：行星离太阳越近，跑得越快；离太阳越远，跑得越慢。</li>
+        <li><b>第三定律（周期定律）</b>：离太阳越远的行星，公转一圈的时间越长。比如水星只要 88 天，海王星却要 165 年！</li>
+      </ul>
+      <div class="callout blue">✨ 这些定律后来被牛顿用万有引力定律完美解释——这也是人类第一次用数学精确描述宇宙的运行。</div>
+    </div>
+
+    <div class="lesson">
+      <h2><span class="no">04</span>太阳系是怎么形成的？</h2>
+      <p class="sub">约 46 亿年前的故事</p>
+      <p>太阳系诞生于一片巨大的<span class="hl">星云</span>（气体和尘埃云）。在引力作用下，星云收缩、旋转，中央形成了太阳，周围剩余的物质逐渐聚集成行星。</p>
+      <ul>
+        <li>靠近太阳的地方温度高，轻的气体被吹走，留下了<span class="hl">岩石行星</span>（水金地火）。</li>
+        <li>远离太阳的地方温度低，保留了大量气体，形成了<span class="hl">气态巨行星</span>（木星、土星）和<span class="hl">冰巨行星</span>（天王星、海王星）。</li>
+      </ul>
+    </div>
+
+    <div class="lesson">
+      <h2><span class="no">05</span>八大行星速览</h2>
+      <p class="sub">快速认识每个成员</p>
+      <div class="grid-2">
+        <div class="fact"><div class="t">☿ 水星 Mercury</div><p>最靠近太阳，公转 88 天，昼夜温差极大。</p></div>
+        <div class="fact"><div class="t">♀ 金星 Venus</div><p>最热的行星，表面有浓厚二氧化碳大气，自转方向相反。</p></div>
+        <div class="fact"><div class="t">🌍 地球 Earth</div><p>我们的家园，目前已知唯一有生命的星球，约 71% 被水覆盖。</p></div>
+        <div class="fact"><div class="t">♂ 火星 Mars</div><p>红色星球，有太阳系最高的火山——奥林匹斯山（约 21 公里高）。</p></div>
+        <div class="fact"><div class="t">♃ 木星 Jupiter</div><p>太阳系最大的行星，质量是其他所有行星总和的 2.5 倍。</p></div>
+        <div class="fact"><div class="t">♄ 土星 Saturn</div><p>以美丽的环闻名，密度比水还小（能浮在水上）。</p></div>
+        <div class="fact"><div class="t">♅ 天王星 Uranus</div><p>冰巨行星，自转轴几乎"躺倒"，公转 84 年。</p></div>
+        <div class="fact"><div class="t">♆ 海王星 Neptune</div><p>最远的行星，公转 165 年，刮着太阳系最猛烈的风。</p></div>
+      </div>
+    </div>
+
+    <!-- 轨道动画 -->
+    <div class="lesson">
+      <h2><span class="no">06</span>模拟轨道运行</h2>
+      <p class="sub">动起来的太阳系（速度已加快，仅供示意）</p>
+      <div class="solar-box" id="solarBox"></div>
+      <div class="callout blue">👀 <b>观察提示</b>：注意看——内侧的行星转得快、外侧的转得慢，这正是开普勒第二、第三定律的体现！</div>
+    </div>
+  </section>
+
+  <!-- 测验 -->
+  <section id="tab-quiz" class="tabpane" style="display:none">
+    <div class="lesson">
+      <div class="quiz-head">
+        <div>
+          <h2 style="margin-bottom:4px">📝 太阳系自我检测</h2>
+          <div class="info" id="quizInfo">共 <span id="totalQ"></span> 题 · 每题 <span id="perScore"></span> 分</div>
+        </div>
+        <div class="score-pill">🏆 当前得分：<span id="liveScore">0</span></div>
+      </div>
+
+      <div id="quizBody"></div>
+
+      <div id="result">
+        <div class="stars" id="resultStars"></div>
+        <div class="big-score" id="finalScore">0</div>
+        <div class="result-title" id="resultTitle"></div>
+        <div class="result-sub" id="resultSub"></div>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+          <button class="btn" onclick="restartQuiz()">🔄 再来一次</button>
+          <button class="btn ghost" onclick="go('solar')">📖 回去复习</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  周珍羽 · 专属科学星球 🌍 用心探索，未来可期 <span class="love">❤</span><br>
+  <span style="opacity:.6">镇海中学初中部台州分校 · 你的科学之旅从这里启航</span>
+</footer>
+</div>
+
+<script>
+/* ---------- 星空背景 ---------- */
+(function(){
+  const c=document.getElementById('stars'),x=c.getContext('2d');
+  let w,h,stars=[];
+  function resize(){w=c.width=innerWidth;h=c.height=innerHeight;
+    stars=Array.from({length:Math.floor(w/3)},()=>({x:Math.random()*w,y:Math.random()*h,r:Math.random()*1.4+.3,s:Math.random()*.4+.1}));
+  }
+  resize();addEventListener('resize',resize);
+  (function draw(){
+    x.clearRect(0,0,w,h);
+    for(const s of stars){
+      x.globalAlpha=Math.random()*.6+.3;
+      x.fillStyle='#dbe6ff';
+      x.beginPath();x.arc(s.x,s.y,s.r,0,7);x.fill();
+    }
+    requestAnimationFrame(draw);
+  })();
+})();
+
+/* ---------- 导航 ---------- */
+const tabs=['home','solar','quiz'];
+function go(t){tabs.forEach(n=>{
+  document.getElementById('tab-'+n).style.display=(n===t)?'block':'none';
+});
+document.querySelectorAll('.nav-links button').forEach(b=>b.classList.toggle('active',b.dataset.tab===t));
+// 切到太阳系页时重新布局轨道动画（容器此时才可见，宽高非0）
+if(t==='solar'&&window.solarLayout) setTimeout(window.solarLayout, 50);
+window.scrollTo({top:0,behavior:'smooth'});
+}
+document.querySelectorAll('.nav-links button').forEach(b=>b.onclick=()=>go(b.dataset.tab));
+function soon(){alert('🚧 这个主题正在制作中，敬请期待！先看看太阳系吧~');}
+
+/* ---------- 行星轨道动画 ---------- */
+(function(){
+  const box=document.getElementById('solarBox');
+  if(!box)return;
+  const planets=[
+    {n:'水星',c:'#b0b7c6',r:5,  o:38, sp:2.0},
+    {n:'金星',c:'#e6c07a',r:8,  o:58, sp:1.6},
+    {n:'地球',c:'#4a9de0',r:8,  o:78, sp:1.3},
+    {n:'火星',c:'#d1684a',r:6,  o:98, sp:1.1},
+    {n:'木星',c:'#e0a35c',r:15, o:126,sp:.8},
+    {n:'土星',c:'#e8d291',r:12, o:156,sp:.6},
+    {n:'天王星',c:'#7fd1e8',r:9,  o:184,sp:.42},
+    {n:'海王星',c:'#4f6fd6',r:9,  o:208,sp:.32},
+  ];
+  // 计算盒子可用半径
+  function layout(){
+    const bw=box.clientWidth, bh=box.clientHeight;
+    if(!bw||!bh) return; // 容器不可见时跳过（宽高为0）
+    const R=Math.min(bw,bh)/2 - 34;
+    box.querySelectorAll('.orbit').forEach(e=>e.remove());
+    box.querySelectorAll('.planet').forEach(e=>e.remove());
+    box.querySelectorAll('.sun').forEach(e=>e.remove());
+    // 创建太阳
+    const sun=document.createElement('div');sun.className='sun';box.appendChild(sun);
+    planets.forEach(p=>{
+      const size=p.r*2;
+      const or=p.o/208*R; // 按最大轨道 208 缩放
+      const od=document.createElement('div');od.className='orbit';
+      od.style.width=od.style.height=(or*2)+'px';
+      od.style.animationDuration=(10/p.sp)+'s';
+      box.appendChild(od);
+      const el=document.createElement('div');el.className='planet';
+      el.style.width=el.style.height=size+'px';
+      el.style.marginLeft=(-p.r)+'px';
+      el.style.background=`radial-gradient(circle at 35% 35%, #fff, ${p.c} 55%, #333)`;
+      el.style.boxShadow=`0 0 10px ${p.c}`;
+      el.innerHTML=`<span class="lbl">${p.n}</span>`;
+      od.appendChild(el);
+    });
+  }
+  layout();addEventListener('resize',layout);
+  // 暴露给外部：切换到太阳系标签页时重新布局
+  window.solarLayout=layout;
+})();
+
+/* ---------- 测验数据 ---------- */
+const QUESTIONS=[
+  {
+    q:"太阳系中，唯一发光的恒星是？",
+    opts:["地球","太阳","月亮","木星"],
+    a:1, explain:"太阳是太阳系唯一的恒星，自己会发光发热。月亮、地球、木星都不自己发光。"
+  },
+  {
+    q:"太阳占太阳系总质量的约多少？",
+    opts:["50%","70%","99.86%","30%"],
+    a:2, explain:"太阳占了整个太阳系质量的 99.86%，所以它是太阳系绝对的'老大'。"
+  },
+  {
+    q:"按离太阳由近到远，正确的顺序是？",
+    opts:["水金地火木土天海","金水地火木土天海","水金火地木土天海","水金地火土木天海"],
+    a:0, explain:"口诀：水金地火、木土天海。水星最近，海王星最远。"
+  },
+  {
+    q:"行星不会飞走也不会掉进太阳，是因为哪两个力量的平衡？",
+    opts:["摩擦力和阻力","引力和惯性","磁力和电力","压力和重力"],
+    a:1, explain:"万有引力把行星往里拉，惯性让它往前飞，两者平衡形成弯曲的轨道。"
+  },
+  {
+    q:"牛顿发现，两个物体之间的引力大小与什么有关？",
+    opts:["与距离完全无关","只和速度有关","质量越大引力越强","和颜色有关"],
+    a:2, explain:"万有引力定律：质量越大、距离越近，引力越强。太阳质量巨大，所以吸引着所有行星。"
+  },
+  {
+    q:"开普勒第一定律指出，行星的轨道是什么形状？",
+    opts:["正圆形","椭圆","抛物线","正方形"],
+    a:1, explain:"行星轨道是椭圆，太阳位于椭圆的一个焦点上，所以行星离太阳时近时远。"
+  },
+  {
+    q:"离太阳越近的行星，公转一周的时间越？",
+    opts:["越长","越短","都一样","不确定"],
+    a:1, explain:"开普勒第三定律：离太阳越近，公转周期越短。水星 88 天，海王星要 165 年。"
+  },
+  {
+    q:"太阳系中体积最大的行星是？",
+    opts:["土星","地球","木星","海王星"],
+    a:2, explain:"木星是太阳系最大的行星，质量是其他所有行星总和的 2.5 倍。"
+  },
+  {
+    q:"太阳系诞生于约多少亿年前的一片星云？",
+    opts:["10亿","20亿","46亿","100亿"],
+    a:2, explain:"太阳系约在 46 亿年前由一片旋转的星云收缩演化形成。"
+  },
+  {
+    q:"靠近太阳的行星大多是岩石行星，而远离太阳的多是气态巨行星，主要原因是？",
+    opts:["岩石更重","气态更轻","近处温度高，轻气体被吹走；远处低温保留气体","行星自己选择的"],
+    a:2, explain:"太阳附近温度高，轻的气体和冰被吹散，只留下岩石；远处温度低，气体被保留下来形成气态巨行星。"
+  }
+];
+const PER=10;
+
+/* ---------- 测验逻辑 ---------- */
+let idx=0,score=0,answered=false;
+const totalQ=QUESTIONS.length;
+document.getElementById('totalQ').textContent=totalQ;
+document.getElementById('perScore').textContent=PER;
+
+function render(){
+  const q=QUESTIONS[idx];
+  const body=document.getElementById('quizBody');
+  body.innerHTML=`
+    <div class="q on">
+      <div class="q-title"><span class="qn">Q${idx+1}/${totalQ}</span>${q.q}</div>
+      <div class="opts">
+        ${q.opts.map((o,i)=>`<button class="opt" data-i="${i}" onclick="answer(${i})">${String.fromCharCode(65+i)}. ${o}</button>`).join('')}
+      </div>
+      <div class="feedback" id="fb"></div>
+      <div class="q-actions">
+        <button class="btn" id="nextBtn" onclick="nextQ()" disabled>下一题 ➡️</button>
+      </div>
+    </div>`;
+  document.getElementById('liveScore').textContent=score;
+}
+function answer(i){
+  if(answered)return;
+  answered=true;
+  const q=QUESTIONS[idx];
+  const opts=document.querySelectorAll('.opt');
+  const fb=document.getElementById('fb');
+  opts.forEach((o,k)=>{
+    o.disabled=true;
+    if(k===q.a)o.classList.add('correct');
+    if(k===i&&i!==q.a)o.classList.add('wrong');
+  });
+  if(i===q.a){score+=PER;fb.className='feedback show ok';fb.innerHTML=`🎉 <b>回答正确！</b> ${q.explain}`;}
+  else{fb.className='feedback show no';fb.innerHTML=`😅 <b>不对哦。</b> ${q.explain}`;}
+  document.getElementById('liveScore').textContent=score;
+  document.getElementById('nextBtn').disabled=false;
+}
+function nextQ(){
+  idx++;answered=false;
+  if(idx<totalQ){render();}
+  else{finish();}
+}
+function finish(){
+  const body=document.getElementById('quizBody');
+  body.style.display='none';
+  const res=document.getElementById('result');
+  const pct=score/(totalQ*PER)*100;
+  document.getElementById('finalScore').textContent=score+'分';
+  let title,sub,stars;
+  if(pct>=90){title='🌟 天文小博士！';sub='太厉害了，周珍羽！你对太阳系的了解已经非常深入，未来可以挑战更多宇宙难题了！';stars='⭐⭐⭐⭐⭐';}
+  else if(pct>=75){title='🚀 优秀小探索家！';sub='很棒的成绩！你掌握了太阳系的精华，再复习一遍细节就能满分啦。';stars='⭐⭐⭐⭐';}
+  else if(pct>=60){title='🌍 不错的开始！';sub='你已经理解了核心内容，把几个错题再看看，会越来越棒的！';stars='⭐⭐⭐';}
+  else{title='🌱 继续加油！';sub='没关系，宇宙本来就很庞大。回到课程复习一遍，再战一次，你一定行！';stars='⭐⭐';}
+  document.getElementById('resultStars').textContent=stars;
+  document.getElementById('resultTitle').textContent=title;
+  document.getElementById('resultSub').textContent=sub;
+  document.getElementById('finalScore').textContent=score+'分';
+  res.classList.add('on');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function restartQuiz(){
+  idx=0;score=0;answered=false;
+  document.getElementById('quizBody').style.display='block';
+  document.getElementById('result').classList.remove('on');
+  render();
+}
+render();
+</script>
+</body>
+</html>
