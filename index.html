@@ -171,8 +171,8 @@
   .btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
 
   /* 结果页 */
-  #result{display:none;text-align:center;padding:30px 10px}
-  #result.on{display:block;animation:fadeIn .6s}
+  #result,#bhResult{display:none;text-align:center;padding:30px 10px}
+  #result.on,#bhResult.on{display:block;animation:fadeIn .6s}
   .big-score{font-size:clamp(60px,12vw,96px);font-weight:800;
     background:linear-gradient(120deg,#34d399,#22d3ee,#a78bfa);
     -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;line-height:1}
@@ -183,6 +183,43 @@
   footer{text-align:center;color:var(--muted);font-size:13px;padding:30px 20px 50px;
     border-top:1px solid var(--card-border);margin-top:40px}
   footer .love{color:var(--pink)}
+
+  /* 黑洞动画区 */
+  .bh-box{
+    position:relative;width:100%;max-width:420px;margin:0 auto;
+    aspect-ratio:1;border-radius:50%;
+    background:radial-gradient(circle at 50% 50%, #000 0%, #0a0a18 45%, #050816 70%);
+    border:1px solid var(--card-border);overflow:hidden;
+  }
+  .bh-core{
+    position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+    width:34%;height:34%;border-radius:50%;
+    background:radial-gradient(circle, #000 0%, #000 60%, #1a1a2e 100%);
+    box-shadow:0 0 30px 6px rgba(0,0,0,.9), 0 0 60px 20px rgba(34,211,238,.15);
+    z-index:3;
+  }
+  .bh-disk{
+    position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+    width:96%;height:96%;border-radius:50%;
+    background:
+      radial-gradient(circle, transparent 0%, transparent 40%, rgba(34,211,238,.05) 55%, rgba(167,139,250,.15) 70%, rgba(34,211,238,.25) 82%, rgba(255,180,60,.4) 92%, transparent 97%);
+    filter:blur(2px);
+    animation:spin 16s linear infinite;
+  }
+  .bh-ring{
+    position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+    width:66%;height:66%;border-radius:50%;
+    border:3px solid rgba(255,180,60,.35);
+    box-shadow:0 0 25px rgba(255,180,60,.4), inset 0 0 25px rgba(255,180,60,.3);
+    animation:pulse 3s ease-in-out infinite;
+  }
+  @keyframes spin{from{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(360deg)}}
+  @keyframes pulse{0%,100%{opacity:.6;transform:translate(-50%,-50%) scale(1)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.04)}}
+  .bh-caption{
+    position:absolute;left:50%;bottom:8%;transform:translateX(-50%);
+    font-size:12px;color:var(--muted);letter-spacing:2px;z-index:4;
+    background:rgba(5,8,22,.6);padding:4px 12px;border-radius:20px;white-space:nowrap;
+  }
 
   @media(max-width:560px){
     .nav{flex-wrap:wrap;gap:10px}
@@ -201,6 +238,7 @@
     <div class="nav-links">
       <button class="active" data-tab="home">🏠 首页</button>
       <button data-tab="solar">🌞 太阳系</button>
+      <button data-tab="blackhole">🕳️ 黑洞</button>
       <button data-tab="quiz">📝 自我检测</button>
     </div>
   </div>
@@ -235,11 +273,11 @@
         <h3>恒星的一生</h3>
         <p>恒星是怎么诞生、燃烧、最后演化的？下次更新见！</p>
       </div>
-      <div class="t-card" onclick="soon()">
-        <span class="emoji">🪐</span>
-        <span class="tag soon">敬请期待</span>
+      <div class="t-card" onclick="go('blackhole')">
+        <span class="emoji">🕳️</span>
+        <span class="tag">已上线</span>
         <h3>黑洞与引力</h3>
-        <p>连光都逃不掉的怪物，到底有多神秘？</p>
+        <p>连光都逃不掉的怪物，到底有多神秘？跟我一起探索！</p>
       </div>
     </div>
   </section>
@@ -342,6 +380,104 @@
       </div>
     </div>
   </section>
+
+  <!-- 黑洞课程 -->
+  <section id="tab-blackhole" class="tabpane" style="display:none">
+    <div class="lesson">
+      <h2><span class="no">01</span>黑洞到底是什么？</h2>
+      <p class="sub">宇宙里最"贪吃"又最神秘的天体</p>
+      <p>黑洞（Black Hole）不是真的"洞"，而是一个<span class="hl">密度大得惊人的天体</span>。它最厉害的地方是——<span class="hl-gold">引力极强，强到连光都逃不出去</span>。</p>
+      <p>你可以把它想象成一个宇宙里的"超级吸尘器"，或者一个引力陷阱。任何东西——不管是星球、气体还是光——只要靠得太近，都会被它抓住，再也出不来。</p>
+      <div class="grid-2">
+        <div class="fact"><div class="t">🔴 不是洞</div><p>它是一个实实在在的天体，只是你看不见它——因为连光都被它吞掉了。</p></div>
+        <div class="fact"><div class="t">⚫ 黑洞是"黑"的</div><p>黑洞本身不发光，所以看起来一片漆黑。我们看到的"黑洞照片"，其实是它周围的发光物质。</p></div>
+      </div>
+      <div class="callout blue">💡 <b>名字来源</b>：1967 年物理学家约翰·惠勒给它起了"黑洞"这个名字，因为它既像"黑"（不发光），又像个"洞"（什么都吞）。</div>
+    </div>
+
+    <div class="lesson">
+      <h2><span class="no">02</span>黑洞是怎么形成的？</h2>
+      <p class="sub">恒星"死亡"后的惊人结局</p>
+      <p>大多数黑洞，是一颗<span class="hl">大质量恒星"死亡"</span>后留下的残骸。恒星靠内部的核聚变发光发热，但当燃料耗尽时……</p>
+      <ul>
+        <li><b>恒星燃料耗尽</b>：核聚变停止，无法再抵抗引力。</li>
+        <li><b>超新星爆发</b>：恒星剧烈爆炸，把外层物质抛向太空。</li>
+        <li><b>核心坍缩</b>：剩下的核心被引力压得越来越小，密度越来越大，最终形成黑洞。</li>
+      </ul>
+      <div class="callout">🧠 <b>想一想</b>：如果把地球压到一颗玻璃珠那么大，它的引力就会强到变成黑洞——密度有多夸张，你感受一下！</div>
+    </div>
+
+    <div class="lesson">
+      <h2><span class="no">03</span>事件视界：有进无回的"边界"</h2>
+      <p class="sub">黑洞的"警戒线"</p>
+      <p>每个黑洞都有一条看不见的边界，叫做<span class="hl">事件视界（Event Horizon）</span>。在视界之外，你还能逃得掉；一旦越过视界，就再也回不来了。</p>
+      <ul>
+        <li><b>在视界内</b>：连速度最快的光（每秒 30 万公里）都逃不出去。</li>
+        <li><b>中心奇点</b>：视界最深处，所有物质被压缩成一个点，密度无限大，连物理定律都失效。</li>
+        <li><b>时间变慢</b>：靠近黑洞，时间会变慢（广义相对论效应），这是电影《星际穿越》里的经典桥段！</li>
+      </ul>
+      <div class="callout blue">💡 <b>为什么光也逃不掉？</b>黑洞引力太强，把空间本身都"压弯"了。光只能沿着弯曲的空间走，结果就被困在里面。</div>
+    </div>
+
+    <div class="lesson">
+      <h2><span class="no">04</span>引力与时空弯曲</h2>
+      <p class="sub">爱因斯坦的伟大发现</p>
+      <p>1915 年，爱因斯坦提出<span class="hl">广义相对论</span>：质量巨大的物体，会把周围的<span class="hl">时空压弯</span>。就像把一个大铁球放在绷紧的橡胶膜上，膜会凹陷下去。</p>
+      <ul>
+        <li><b>行星绕太阳转</b>：不是太阳"拉"着行星，而是太阳把时空压弯了，行星沿着弯曲的"坑"滑行。</li>
+        <li><b>黑洞最极端</b>：黑洞质量超大，把时空弯成一个"无底洞"。</li>
+        <li><b>引力透镜</b>：光经过弯曲的时空会拐弯，所以远处的星光会被"放大"或"扭曲"——这成了我们观测宇宙的天然望远镜。</li>
+      </ul>
+    </div>
+
+    <div class="lesson">
+      <h2><span class="no">05</span>我们怎么"看到"看不见的黑洞？</h2>
+      <p class="sub">科学家们的巧办法</p>
+      <p>黑洞本身看不见，但科学家有很多聪明的办法发现它：</p>
+      <div class="grid-2">
+        <div class="fact"><div class="t">🔥 吸积盘发光</div><p>黑洞吞噬周围气体时，气体会被加热到几百万度，发出强烈的光，就像"黑洞的晚餐火光"。</p></div>
+        <div class="fact"><div class="t">📸 第一张照片</div><p>2019 年，人类拍到了第一张黑洞照片（M87* 星系中心），震惊世界！</p></div>
+        <div class="fact"><div class="t">🌊 引力波</div><p>2015 年 LIGO 探测到两个黑洞碰撞产生的"时空涟漪"，是爱因斯坦理论的又一次验证。</p></div>
+        <div class="fact"><div class="t">🌌 银河系中心</div><p>我们银河系中心就有一个超大质量黑洞——"人马座A*"，质量约为太阳的 400 万倍。</p></div>
+      </div>
+      <div class="callout">🧠 <b>冷知识</b>：黑洞吞噬物质时，光在吸积盘里高速旋转，才让黑洞"看起来"有个亮亮的圆环。这就是《星际穿越》里那个壮观的画面！</div>
+    </div>
+
+    <!-- 黑洞动画 -->
+    <div class="lesson">
+      <h2><span class="no">06</span>模拟黑洞与吸积盘</h2>
+      <p class="sub">感受引力漩涡的壮观（示意）</p>
+      <div class="bh-box" id="bhBox">
+        <div class="bh-core"></div>
+        <div class="bh-disk"></div>
+        <div class="bh-ring"></div>
+        <div class="bh-caption">事件视界 · 有进无回</div>
+      </div>
+      <div class="callout blue">👀 <b>观察提示</b>：中间纯黑的是事件视界，周围旋转发光的圆环就是吸积盘——被黑洞"吞"之前，气体正在高速旋转发热！</div>
+    </div>
+
+    <!-- 黑洞测验 -->
+    <div class="lesson">
+      <div class="quiz-head">
+        <div>
+          <h2 style="margin-bottom:4px">🕳️ 黑洞知识闯关</h2>
+          <div class="info">共 <span id="bhTotalQ"></span> 题 · 每题 <span id="bhPerScore"></span> 分</div>
+        </div>
+        <div class="score-pill">🏆 当前得分：<span id="bhLiveScore">0</span></div>
+      </div>
+      <div id="bhQuizBody"></div>
+      <div id="bhResult">
+        <div class="stars" id="bhResultStars"></div>
+        <div class="big-score" id="bhFinalScore">0</div>
+        <div class="result-title" id="bhResultTitle"></div>
+        <div class="result-sub" id="bhResultSub"></div>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+          <button class="btn" onclick="restartBHQuiz()">🔄 再来一次</button>
+          <button class="btn ghost" onclick="go('blackhole')">📖 回去复习</button>
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
 
 <footer>
@@ -371,7 +507,7 @@
 })();
 
 /* ---------- 导航 ---------- */
-const tabs=['home','solar','quiz'];
+const tabs=['home','solar','quiz','blackhole'];
 function go(t){tabs.forEach(n=>{
   document.getElementById('tab-'+n).style.display=(n===t)?'block':'none';
 });
@@ -551,6 +687,116 @@ function restartQuiz(){
   render();
 }
 render();
+
+/* ---------- 黑洞测验 ---------- */
+const BH_QUESTIONS=[
+  {
+    q:"黑洞为什么是\"黑\"的？",
+    opts:["它不发光","它是空的","它颜色是黑的","它被云挡住了"],
+    a:0, explain:"黑洞引力太强，连光都逃不出来，所以它本身不发光，看起来一片漆黑。"
+  },
+  {
+    q:"大多数黑洞是怎么形成的？",
+    opts:["行星碰撞","大质量恒星死亡后坍缩","宇宙爆炸","外星人建造"],
+    a:1, explain:"大质量恒星燃料耗尽后发生超新星爆发，核心坍缩成密度极大的黑洞。"
+  },
+  {
+    q:"事件视界是什么？",
+    opts:["黑洞的边界，越过就出不来","黑洞的入口","能看见黑洞的望远镜","黑洞发出的光"],
+    a:0, explain:"事件视界是黑洞的\"警戒线\"，在它之内连光都逃不出去。"
+  },
+  {
+    q:"2019 年人类拍到的第一张黑洞照片，中心在哪个星系？",
+    opts:["银河系","仙女座星系","M87*","猎户座"],
+    a:2, explain:"2019 年拍到的第一张黑洞照片是 M87* 星系中心的超大质量黑洞。"
+  },
+  {
+    q:"引力波是什么？",
+    opts:["声波","时空的涟漪","电磁波","引力射线"],
+    a:1, explain:"引力波是巨大天体（如黑洞碰撞）引起的时空\"涟漪\"，2015 年 LIGO 首次探测到。"
+  },
+  {
+    q:"我们银河系中心的黑洞叫什么？",
+    opts:["人马座A*","天狼星","织女星","北极星"],
+    a:0, explain:"银河系中心有一个超大质量黑洞，叫\"人马座A*\"，质量约为太阳的 400 万倍。"
+  },
+  {
+    q:"光的速度大约是？",
+    opts:["每秒3万公里","每秒30万公里","每秒300万公里","每秒30公里"],
+    a:1, explain:"光速约每秒 30 万公里，是宇宙中最快的速度，但连它也逃不出黑洞。"
+  },
+  {
+    q:"靠近黑洞时，时间会怎样？",
+    opts:["变快","不变","变慢","停止"],
+    a:2, explain:"根据广义相对论，越靠近大质量天体（如黑洞），时间流逝越慢。"
+  }
+];
+const BH_PER=10;
+let bhIdx=0,bhScore=0,bhAnswered=false;
+const bhTotalQ=BH_QUESTIONS.length;
+document.getElementById('bhTotalQ').textContent=bhTotalQ;
+document.getElementById('bhPerScore').textContent=BH_PER;
+function renderBH(){
+  const q=BH_QUESTIONS[bhIdx];
+  const body=document.getElementById('bhQuizBody');
+  body.innerHTML=`
+    <div class="q on">
+      <div class="q-title"><span class="qn">Q${bhIdx+1}/${bhTotalQ}</span>${q.q}</div>
+      <div class="opts">
+        ${q.opts.map((o,i)=>`<button class="opt" data-i="${i}" onclick="answerBH(${i})">${String.fromCharCode(65+i)}. ${o}</button>`).join('')}
+      </div>
+      <div class="feedback" id="bhFb"></div>
+      <div class="q-actions">
+        <button class="btn" id="bhNextBtn" onclick="nextBH()" disabled>下一题 ➡️</button>
+      </div>
+    </div>`;
+  document.getElementById('bhLiveScore').textContent=bhScore;
+}
+function answerBH(i){
+  if(bhAnswered)return;
+  bhAnswered=true;
+  const q=BH_QUESTIONS[bhIdx];
+  const opts=document.querySelectorAll('#bhQuizBody .opt');
+  const fb=document.getElementById('bhFb');
+  opts.forEach((o,k)=>{
+    o.disabled=true;
+    if(k===q.a)o.classList.add('correct');
+    if(k===i&&i!==q.a)o.classList.add('wrong');
+  });
+  if(i===q.a){bhScore+=BH_PER;fb.className='feedback show ok';fb.innerHTML=`🎉 <b>回答正确！</b> ${q.explain}`;}
+  else{fb.className='feedback show no';fb.innerHTML=`😅 <b>不对哦。</b> ${q.explain}`;}
+  document.getElementById('bhLiveScore').textContent=bhScore;
+  document.getElementById('bhNextBtn').disabled=false;
+}
+function nextBH(){
+  bhIdx++;bhAnswered=false;
+  if(bhIdx<bhTotalQ){renderBH();}
+  else{finishBH();}
+}
+function finishBH(){
+  const body=document.getElementById('bhQuizBody');
+  body.style.display='none';
+  const res=document.getElementById('bhResult');
+  const pct=bhScore/(bhTotalQ*BH_PER)*100;
+  let title,sub,stars;
+  if(pct>=90){title='🌌 黑洞研究专家！';sub='太强了，周珍羽！你已经掌握了黑洞的奥秘，可以去当小小天文学家了！';stars='⭐⭐⭐⭐⭐';}
+  else if(pct>=75){title='🕳️ 引力大师！';sub='很棒的发挥！你对黑洞理解得很深，再复习几个细节就能满分。';stars='⭐⭐⭐⭐';}
+  else if(pct>=60){title='🔭 不错的探索！';sub='你已经理解了核心，把错题再看一遍，会越来越强！';stars='⭐⭐⭐';}
+  else{title='🌱 继续加油！';sub='黑洞本来就深奥，回去把课程复习一遍再战，你一定行！';stars='⭐⭐';}
+  document.getElementById('bhResultStars').textContent=stars;
+  document.getElementById('bhResultTitle').textContent=title;
+  document.getElementById('bhResultSub').textContent=sub;
+  document.getElementById('bhFinalScore').textContent=bhScore+'分';
+  res.classList.add('on');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function restartBHQuiz(){
+  bhIdx=0;bhScore=0;bhAnswered=false;
+  document.getElementById('bhQuizBody').style.display='block';
+  document.getElementById('bhResult').classList.remove('on');
+  renderBH();
+}
+renderBH();
 </script>
 </body>
 </html>
