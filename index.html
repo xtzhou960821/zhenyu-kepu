@@ -1276,9 +1276,22 @@
 
 <footer>
   周珍羽 · 专属科学星球 🌍 用心探索，未来可期 <span class="love">❤</span><br>
-  <span style="opacity:.6">镇海中学初中部台州分校 · 你的科学之旅从这里启航</span>
+  <span style="opacity:.6">镇海中学初中部台州分校 · 你的科学之旅从这里启航</span><br>
+  <span id="visitor-count" style="opacity:.75">👣 到访人数：<span id="visitor-num">--</span> 人</span>
 </footer>
 </div>
+
+<script>
+/* ---------- 到访人数计数器 ---------- */
+(function(){
+  const num=document.getElementById('visitor-num');
+  if(!num) return;
+  fetch('https://api.counterapi.dev/v1/zhenyu-kepu/visitors/up')
+    .then(r=>r.json())
+    .then(d=>{ num.textContent=(d&&d.count!=null)?d.count:'1'; })
+    .catch(()=>{ num.textContent='1'; });
+})();
+</script>
 
 <script>
 /* ---------- 星空背景 ---------- */
