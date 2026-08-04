@@ -271,6 +271,22 @@
   .dino-box .db-caption{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);
     font-size:12px;color:var(--muted);background:rgba(5,8,22,.7);padding:4px 14px;border-radius:20px;white-space:nowrap;z-index:2}
 
+  /* 光的色散动画 */
+  .light-box{position:relative;width:100%;height:300px;border-radius:var(--radius);
+    background:radial-gradient(circle at 50% 20%, #101a30 0%, #050816 75%);
+    border:1px solid var(--card-border);overflow:hidden}
+  .light-box canvas{position:absolute;inset:0}
+  .light-box .lb-caption{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);
+    font-size:12px;color:var(--muted);background:rgba(5,8,22,.7);padding:4px 14px;border-radius:20px;white-space:nowrap;z-index:2}
+
+  /* 原子结构动画 */
+  .atom-box{position:relative;width:100%;height:340px;border-radius:var(--radius);
+    background:radial-gradient(circle at 50% 50%, #0c1428 0%, #050816 70%);
+    border:1px solid var(--card-border);overflow:hidden}
+  .atom-box canvas{position:absolute;inset:0}
+  .atom-box .ab-caption{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);
+    font-size:12px;color:var(--muted);background:rgba(5,8,22,.7);padding:4px 14px;border-radius:20px;white-space:nowrap;z-index:2}
+
   @media(max-width:560px){
     .nav{flex-wrap:wrap;gap:10px}
     .nav-links{margin-left:0;width:100%;justify-content:flex-start}
@@ -294,6 +310,8 @@
       <button data-tab="planets">🪐 行星</button>
       <button data-tab="cell">🧬 细胞</button>
       <button data-tab="dino">🦕 恐龙</button>
+      <button data-tab="light">🔦 光</button>
+      <button data-tab="element">⚗️ 元素</button>
       <button data-tab="quiz">📝 自我检测</button>
     </div>
   </div>
@@ -351,6 +369,18 @@
         <span class="tag">已上线</span>
         <h3>恐龙与古生物</h3>
         <p>穿越到侏罗纪，看看统治地球 1.6 亿年的巨兽！</p>
+      </div>
+      <div class="t-card" onclick="go('light')">
+        <span class="emoji">🔦</span>
+        <span class="tag">已上线</span>
+        <h3>光的秘密</h3>
+        <p>光速、颜色、折射——还有连光都逃不掉的黑洞！</p>
+      </div>
+      <div class="t-card" onclick="go('element')">
+        <span class="emoji">⚗️</span>
+        <span class="tag">已上线</span>
+        <h3>元素周期表探险</h3>
+        <p>氢、氧、碳、金……每个元素都有自己的故事！</p>
       </div>
       <div class="t-card" onclick="go('blackhole')">
         <span class="emoji">🕳️</span>
@@ -1064,6 +1094,183 @@
       </div>
     </div>
   </section>
+
+  <!-- 光的秘密课程 -->
+  <section id="tab-light" class="tabpane" style="display:none">
+    <div class="lesson">
+      <h2><span class="no">01</span>光到底是什么？</h2>
+      <p class="sub">看得见却抓不住的神秘</p>
+      <p>光是一种<span class="hl">电磁波</span>，也是一种叫<span class="hl">光子</span>的微小粒子——它既像波又像粒子，科学家称之为<span class="hl-gold">波粒二象性</span>。光是我们观察宇宙最重要的工具！</p>
+      <div class="grid-2">
+        <div class="fact"><div class="t">⚡ 电磁波</div><p>光是一种电磁波，像水波一样有波长和频率，只是看不见、摸不着。</p></div>
+        <div class="fact"><div class="t">⚛️ 光子</div><p>光也是由一个个"光子"组成的，每个光子都是一小份能量。</p></div>
+      </div>
+      <div class="callout blue">💡 <b>想一想</b>：我们能看到太阳、星星、身边的一切，靠的都是光——光是宇宙的"信使"，把远方的信息送到我们眼睛里。</div>
+    </div>
+
+    <div class="lesson">
+      <h2><span class="no">02</span>光速：宇宙的速度上限</h2>
+      <p class="sub">每秒 30 万公里，快到离谱</p>
+      <p>光在真空中的速度是 <span class="hl-gold">每秒约 30 万公里</span>，是宇宙中速度的"天花板"。没有任何东西能比光更快。</p>
+      <ul>
+        <li><b>有多快</b>：光一秒钟能绕地球约 7 圈半！</li>
+        <li><b>太阳光到地球</b>：要花约 8 分钟——所以我们看到的太阳，其实是它 8 分钟前的样子。</li>
+        <li><b>宇宙距离</b>：天文学家常用"光年"来量距离，就是光走一年的路程。</li>
+      </ul>
+      <div class="callout">🚀 <b>想一想</b>：如果你能坐上一艘"光速飞船"，绕地球一圈只要 0.13 秒！可惜目前还没办法。</div>
+    </div>
+
+    <div class="lesson">
+      <h2><span class="no">03</span>光的颜色：彩虹的秘密</h2>
+      <p class="sub">白光其实是"混合色"</p>
+      <p>我们看到的<span class="hl">白光</span>，其实是很多种颜色混合在一起。当光穿过棱镜，就会<span class="hl">色散</span>成一条彩虹——这就是彩虹和肥皂泡七彩颜色的原因！</p>
+      <ul>
+        <li><b>七色光</b>：红、橙、黄、绿、蓝、靛、紫（口诀：红橙黄绿蓝靛紫）。</li>
+        <li><b>为什么树叶是绿的</b>：因为树叶"吸收"了其他颜色，只"反射"绿色到我们眼里。</li>
+        <li><b>彩虹怎么来的</b>：雨后空气中的小水滴像无数个小棱镜，把阳光分解成七彩。</li>
+      </ul>
+      <div class="callout blue">🌈 <b>想一想</b>：你看到的物体颜色，其实是它"反射"给我们的颜色——其他颜色都被它"吃掉"了！</div>
+    </div>
+
+    <div class="lesson">
+      <h2><span class="no">04</span>光的折射：光也会"拐弯"</h2>
+      <p class="sub">光在不同物质里会改变方向</p>
+      <p>当光从一种物质进入另一种物质（比如从空气进入水），它会发生<span class="hl">折射</span>——改变方向。这就是为什么水里的吸管看起来像"折断"了。</p>
+      <ul>
+        <li><b>折射现象</b>：光进入不同物质，速度改变，方向也跟着偏折。</li>
+        <li><b>海市蜃楼</b>：光经过不同温度的空气发生折射，让远处的东西看起来"浮"在空中。</li>
+        <li><b>透镜原理</b>：眼镜、放大镜、望远镜都靠折射来聚光或成像。</li>
+      </ul>
+      <div class="callout">🔍 <b>小实验</b>：把一根筷子插进装满水的杯子里，从侧面看——它是不是"折断"了？这就是光的折射！</div>
+    </div>
+
+    <div class="lesson">
+      <h2><span class="no">05</span>连光都逃不掉：光与黑洞</h2>
+      <p class="sub">呼应黑洞主题</p>
+      <p>还记得黑洞主题吗？黑洞的引力强到<span class="hl-gold">连光都逃不出来</span>。光已经是宇宙最快的了，为什么还逃不掉？</p>
+      <ul>
+        <li><b>时空被压弯</b>：黑洞质量超大，把周围的时空"压弯"成一个无底洞。</li>
+        <li><b>光沿弯曲时空走</b>：光只能沿着弯曲的空间前进，一旦越过事件视界，就被困在里面。</li>
+        <li><b>所以黑洞是黑的</b>：连光都出不来，我们当然看不见它本身。</li>
+      </ul>
+      <div class="callout blue">🌀 <b>神奇</b>：光速是宇宙的"速度天花板"，但引力连"天花板"都能困住——这就是黑洞最神秘的地方！</div>
+    </div>
+
+    <div class="lesson">
+      <h2><span class="no">06</span>光的色散实验</h2>
+      <p class="sub">看白光如何变成彩虹（示意）</p>
+      <div class="light-box" id="lightBox">
+        <canvas id="lightCanvas"></canvas>
+        <div class="lb-caption">白光 → 棱镜 → 七彩光</div>
+      </div>
+      <div class="callout blue">👀 <b>观察提示</b>：一束白光射进棱镜，被分解成红橙黄绿蓝靛紫——这就是彩虹的秘密！</div>
+    </div>
+
+    <!-- 光测验 -->
+    <div class="lesson">
+      <div class="quiz-head">
+        <div>
+          <h2 style="margin-bottom:4px">🔦 光的秘密闯关</h2>
+          <div class="info">共 <span id="liTotalQ"></span> 题 · 每题 <span id="liPerScore"></span> 分</div>
+        </div>
+        <div class="score-pill">🏆 当前得分：<span id="liLiveScore">0</span></div>
+      </div>
+      <div id="liQuizBody"></div>
+      <div id="liResult">
+        <div class="stars" id="liResultStars"></div>
+        <div class="big-score" id="liFinalScore">0</div>
+        <div class="result-title" id="liResultTitle"></div>
+        <div class="result-sub" id="liResultSub"></div>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+          <button class="btn" onclick="restartLIQuiz()">🔄 再来一次</button>
+          <button class="btn ghost" onclick="go('light')">📖 回去复习</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 元素周期表课程 -->
+  <section id="tab-element" class="tabpane" style="display:none">
+    <div class="lesson">
+      <h2><span class="no">01</span>什么是元素？</h2>
+      <p class="sub">构成世界的"积木"</p>
+      <p>世界上所有物质，都是由大约 <span class="hl-gold">118 种</span>基本物质组成的，它们叫<span class="hl">化学元素</span>。就像乐高积木用有限几种零件能拼出无数东西一样，元素组成了世间万物。</p>
+      <div class="grid-2">
+        <div class="fact"><div class="t">🧱 原子</div><p>元素的最小单位是原子，原子太小小到要用特殊仪器才能看到。</p></div>
+        <div class="fact"><div class="t">🔢 原子序数</div><p>每种元素有一个"身份证号"叫原子序数，决定它是谁。氢是 1，氧是 8，金是 79。</p></div>
+      </div>
+      <div class="callout blue">💡 <b>想一想</b>：你身体里就有几十种元素——钙让骨头硬、铁让血液红、碳是生命的骨架。</div>
+    </div>
+
+    <div class="lesson">
+      <h2><span class="no">02</span>元素周期表怎么看？</h2>
+      <p class="sub">化学家的"藏宝图"</p>
+      <p>科学家把 118 种元素排成一张<span class="hl">元素周期表</span>，像一张有规律的"藏宝图"，按原子序数从小到大排列。</p>
+      <ul>
+        <li><b>行（周期）</b>：横向的每一行，元素电子层数相同。</li>
+        <li><b>列（族）</b>：纵向的每一列，元素性质相似——比如最右边的"惰性气体"都不爱反应。</li>
+        <li><b>每个格子</b>：写着元素的符号、名字、原子序数和质量。</li>
+      </ul>
+      <div class="callout">🗺 <b>小知识</b>：元素符号用拉丁文缩写，比如氢 H、氧 O、铁 Fe、金 Au。记住几个常见的，你就能"读懂"很多化学式了！</div>
+    </div>
+
+    <div class="lesson">
+      <h2><span class="no">03</span>元素明星榜：常见元素的故事</h2>
+      <p class="sub">身边到处都有它们</p>
+      <div class="grid-2">
+        <div class="fact"><div class="t">💨 氢 H（1号）</div><p>宇宙中最多的元素，恒星靠氢聚变发光，太阳的"燃料"就是它。</p></div>
+        <div class="fact"><div class="t">🌬 氧 O（8号）</div><p>我们呼吸的空气里就有氧，约占空气的 21%，也是水的重要成分。</p></div>
+        <div class="fact"><div class="t">🖤 碳 C（6号）</div><p>生命的骨架，钻石也是碳！石墨和钻石其实是同一种元素的"不同造型"。</p></div>
+        <div class="fact"><div class="t">⚙️ 铁 Fe（26号）</div><p>建筑、汽车、桥梁都靠它，你血液里的"红色"也来自铁。</p></div>
+        <div class="fact"><div class="t">💛 金 Au（79号）</div><p>稀有又稳定，几乎不腐蚀，所以被做成首饰和"镇宅"的黄金。</p></div>
+        <div class="fact"><div class="t">🌡 汞 Hg（80号）</div><p>常温下是液态的金属，就是温度计里亮晶晶的"水银"。</p></div>
+      </div>
+    </div>
+
+    <div class="lesson">
+      <h2><span class="no">04</span>元素从哪里来？</h2>
+      <p class="sub">你身上的原子来自星星</p>
+      <p>你知道吗？你身体里的很多元素，其实诞生在<span class="hl">恒星内部</span>和<span class="hl">超新星爆发</span>中！</p>
+      <ul>
+        <li><b>氢和氦</b>：宇宙大爆炸后最初形成。</li>
+        <li><b>碳、氧、铁</b>：在恒星内部的核聚变中"炼"出来的。</li>
+        <li><b>金、银、铂</b>：大多来自超新星爆发或中子星碰撞这样的极端事件。</li>
+      </ul>
+      <div class="callout blue">✨ <b>震撼</b>：你和星星来自同一个地方！你身上的碳、铁、钙……都是恒星亿万年前"炼"出来的——我们真的是"星尘"！</div>
+    </div>
+
+    <div class="lesson">
+      <h2><span class="no">05</span>模拟原子结构</h2>
+      <p class="sub">看看原子内部长什么样（示意）</p>
+      <div class="atom-box" id="atomBox">
+        <canvas id="atomCanvas"></canvas>
+        <div class="ab-caption">原子核 + 绕行的电子</div>
+      </div>
+      <div class="callout blue">👀 <b>观察提示</b>：中间的小球是原子核（由质子和中子组成），周围环绕飞行的就是电子——电子绕核运动，就像行星绕太阳！</div>
+    </div>
+
+    <!-- 元素测验 -->
+    <div class="lesson">
+      <div class="quiz-head">
+        <div>
+          <h2 style="margin-bottom:4px">⚗️ 元素知识闯关</h2>
+          <div class="info">共 <span id="elTotalQ"></span> 题 · 每题 <span id="elPerScore"></span> 分</div>
+        </div>
+        <div class="score-pill">🏆 当前得分：<span id="elLiveScore">0</span></div>
+      </div>
+      <div id="elQuizBody"></div>
+      <div id="elResult">
+        <div class="stars" id="elResultStars"></div>
+        <div class="big-score" id="elFinalScore">0</div>
+        <div class="result-title" id="elResultTitle"></div>
+        <div class="result-sub" id="elResultSub"></div>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+          <button class="btn" onclick="restartELQuiz()">🔄 再来一次</button>
+          <button class="btn ghost" onclick="go('element')">📖 回去复习</button>
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
 
 <footer>
@@ -1093,7 +1300,7 @@
 })();
 
 /* ---------- 导航 ---------- */
-const tabs=['home','solar','quiz','blackhole','stellar','cosmos','planets','cell','dino'];
+const tabs=['home','solar','quiz','blackhole','stellar','cosmos','planets','cell','dino','light','element'];
 function go(t){tabs.forEach(n=>{
   document.getElementById('tab-'+n).style.display=(n===t)?'block':'none';
 });
@@ -1114,6 +1321,16 @@ if(window.cellAnim){
 if(window.dinoAnim){
   if(t==='dino') setTimeout(window.dinoAnim.start, 60);
   else window.dinoAnim.stop();
+}
+// 切到光页时启动色散动画，离开时停止
+if(window.lightAnim){
+  if(t==='light') setTimeout(window.lightAnim.start, 60);
+  else window.lightAnim.stop();
+}
+// 切到元素页时启动原子动画，离开时停止
+if(window.atomAnim){
+  if(t==='element') setTimeout(window.atomAnim.start, 60);
+  else window.atomAnim.stop();
 }
 window.scrollTo({top:0,behavior:'smooth'});
 }
@@ -1930,6 +2147,220 @@ function restartDNQuiz(){
   renderDN();
 }
 renderDN();
+
+/* ---------- 光的色散动画 ---------- */
+(function(){
+  const box=document.getElementById('lightBox');
+  if(!box) return;
+  const c=document.getElementById('lightCanvas');
+  const x=c.getContext('2d');
+  let w,h,animId=null,started=false,step=0;
+  function resize(){w=c.width=box.clientWidth||320;h=c.height=box.clientHeight||300;}
+  const cols=['#ff6b6b','#ffa94d','#ffd43b','#69db7c','#4dabf7','#9775fa','#da77f2'];
+  function draw(){
+    x.clearRect(0,0,w,h);
+    x.fillStyle='rgba(255,255,255,.9)';
+    x.beginPath();x.arc(w*.12,h*.18,10,0,7);x.fill();
+    x.strokeStyle='rgba(255,255,255,.85)';x.lineWidth=4;x.lineCap='round';
+    x.beginPath();x.moveTo(w*.12+10,h*.18);x.lineTo(w*.5,h*.5);x.stroke();
+    x.fillStyle='rgba(167,139,250,.35)';x.strokeStyle='#a78bfa';x.lineWidth=2;
+    x.beginPath();x.moveTo(w*.5,h*.35);x.lineTo(w*.64,h*.5);x.lineTo(w*.5,h*.65);x.closePath();x.fill();x.stroke();
+    const sw=Math.sin(step/30)*2;
+    for(let i=0;i<cols.length;i++){
+      x.strokeStyle=cols[i];x.lineWidth=3.5;x.globalAlpha=.95;
+      x.beginPath();x.moveTo(w*.5,h*.5);x.lineTo(w*.68+sw, h*.38+i*7);x.stroke();
+    }
+    x.globalAlpha=1;
+    x.fillStyle='#cfe3ff';x.font='13px sans-serif';x.textAlign='center';
+    x.fillText('白光', w*.13, h*.06);
+    x.fillText('七彩光', w*.72, h*.2);
+    step++;
+  }
+  function loop(){draw();animId=requestAnimationFrame(loop);}
+  function start(){if(started)return;started=true;resize();loop();}
+  function stop(){if(animId){cancelAnimationFrame(animId);animId=null;}started=false;}
+  addEventListener('resize',()=>{if(started)resize();});
+  window.lightAnim={start,stop};
+})();
+
+/* ---------- 原子结构动画 ---------- */
+(function(){
+  const box=document.getElementById('atomBox');
+  if(!box) return;
+  const c=document.getElementById('atomCanvas');
+  const x=c.getContext('2d');
+  let w,h,animId=null,started=false,step=0;
+  function resize(){w=c.width=box.clientWidth||320;h=c.height=box.clientHeight||340;}
+  function draw(){
+    x.clearRect(0,0,w,h);
+    const cx=w/2,cy=h/2;
+    x.strokeStyle='rgba(167,139,250,.35)';x.lineWidth=1.5;
+    x.beginPath();x.ellipse(cx,cy,Math.min(w,h)*.34,Math.min(w,h)*.34*0.38,0,0,7);x.stroke();
+    x.beginPath();x.ellipse(cx,cy,Math.min(w,h)*.34,Math.min(w,h)*.34*0.38,Math.PI/3,0,7);x.stroke();
+    x.beginPath();x.ellipse(cx,cy,Math.min(w,h)*.34,Math.min(w,h)*.34*0.38,-Math.PI/3,0,7);x.stroke();
+    x.fillStyle='#ffd43b';
+    x.beginPath();x.arc(cx,cy,18,0,7);x.fill();
+    x.fillStyle='#ff6b6b';
+    x.beginPath();x.arc(cx-5,cy-4,7,0,7);x.fill();
+    x.fillStyle='#4dabf7';
+    x.beginPath();x.arc(cx+6,cy+4,7,0,7);x.fill();
+    x.fillStyle='rgba(255,255,255,.8)';x.font='12px sans-serif';x.textAlign='center';
+    x.fillText('原子核', cx, cy+34);
+    for(let i=0;i<3;i++){
+      const a=step/40 + i*Math.PI*2/3;
+      const er=Math.min(w,h)*.34;
+      const ex=cx+Math.cos(a)*er, ey=cy+Math.sin(a)*er*0.38;
+      x.fillStyle='#22d3ee';x.globalAlpha=.9;
+      x.beginPath();x.arc(ex,ey,5,0,7);x.fill();
+    }
+    x.globalAlpha=1;
+    x.fillStyle='#cfe3ff';x.fillText('电子', cx+Math.min(w,h)*.34-8, cy-20);
+    step++;
+  }
+  function loop(){draw();animId=requestAnimationFrame(loop);}
+  function start(){if(started)return;started=true;resize();loop();}
+  function stop(){if(animId){cancelAnimationFrame(animId);animId=null;}started=false;}
+  addEventListener('resize',()=>{if(started)resize();});
+  window.atomAnim={start,stop};
+})();
+
+/* ---------- 光的测验 ---------- */
+const LI_QUESTIONS=[
+  {q:"光是什么？",opts:["一种声音","电磁波（也是光子）","一种气味","一种液体"],a:1,explain:"光是一种电磁波，也是一种叫光子的微小粒子，具有波粒二象性。"},
+  {q:"光在真空中的速度大约是？",opts:["每秒30公里","每秒300万公里","每秒约30万公里","每秒3公里"],a:2,explain:"光速约每秒 30 万公里，是宇宙中速度的“天花板”。"},
+  {q:"我们看到的太阳，其实是它多久前的样子？",opts:["现在的样子","8分钟前","1小时前","1年前"],a:1,explain:"太阳光到地球要约 8 分钟，所以我们看到的是 8 分钟前的太阳。"},
+  {q:"白光通过棱镜会怎样？",opts:["消失","变成黑色","色散成七色光","变成直线"],a:2,explain:"白光通过棱镜会色散成红橙黄绿蓝靛紫的彩虹。"},
+  {q:"树叶为什么是绿色的？",opts:["它发出绿光","它反射绿色、吸收其他颜色","它吸收了绿光","被染绿了"],a:1,explain:"树叶吸收其他颜色，只反射绿色到我们眼里，所以看起来是绿的。"},
+  {q:"水里的吸管看起来像折断了，这是为什么？",opts:["真的断了","光的折射","眼睛花了","水的颜色"],a:1,explain:"光从空气进入水发生折射、改变方向，所以吸管看起来像折断了。"},
+  {q:"为什么连光都逃不出黑洞？",opts:["黑洞会发光","黑洞引力太强，把时空压弯了","光太慢了","黑洞是实心的"],a:1,explain:"黑洞引力极强，把时空压弯成一个无底洞，光只能沿弯曲时空走，一旦越过视界就出不来。"},
+  {q:"彩虹是怎么形成的？",opts:["画画画的","雨滴像小棱镜把阳光分解成七色","月亮的功劳","火山喷发"],a:1,explain:"雨后小水滴像无数棱镜，把阳光色散成七彩，就形成了彩虹。"}
+];
+const LI_PER=10;
+let liIdx=0,liScore=0,liAnswered=false;
+const liTotalQ=LI_QUESTIONS.length;
+document.getElementById('liTotalQ').textContent=liTotalQ;
+document.getElementById('liPerScore').textContent=LI_PER;
+function renderLI(){
+  const q=LI_QUESTIONS[liIdx];
+  const body=document.getElementById('liQuizBody');
+  body.innerHTML=`
+    <div class="q on">
+      <div class="q-title"><span class="qn">Q${liIdx+1}/${liTotalQ}</span>${q.q}</div>
+      <div class="opts">
+        ${q.opts.map((o,i)=>`<button class="opt" data-i="${i}" onclick="answerLI(${i})">${String.fromCharCode(65+i)}. ${o}</button>`).join('')}
+      </div>
+      <div class="feedback" id="liFb"></div>
+      <div class="q-actions">
+        <button class="btn" id="liNextBtn" onclick="nextLI()" disabled>下一题 ➡️</button>
+      </div>
+    </div>`;
+  document.getElementById('liLiveScore').textContent=liScore;
+}
+function answerLI(i){
+  if(liAnswered)return;
+  liAnswered=true;
+  const q=LI_QUESTIONS[liIdx];
+  const opts=document.querySelectorAll('#liQuizBody .opt');
+  const fb=document.getElementById('liFb');
+  opts.forEach((o,k)=>{o.disabled=true;if(k===q.a)o.classList.add('correct');if(k===i&&i!==q.a)o.classList.add('wrong');});
+  if(i===q.a){liScore+=LI_PER;fb.className='feedback show ok';fb.innerHTML=`🎉 <b>回答正确！</b> ${q.explain}`;}
+  else{fb.className='feedback show no';fb.innerHTML=`😅 <b>不对哦。</b> ${q.explain}`;}
+  document.getElementById('liLiveScore').textContent=liScore;
+  document.getElementById('liNextBtn').disabled=false;
+}
+function nextLI(){liIdx++;liAnswered=false;if(liIdx<liTotalQ){renderLI();}else{finishLI();}}
+function finishLI(){
+  const body=document.getElementById('liQuizBody');body.style.display='none';
+  const res=document.getElementById('liResult');
+  const pct=liScore/(liTotalQ*LI_PER)*100;
+  let title,sub,stars;
+  if(pct>=90){title='🌈 光学大师！';sub='太强了！你对光的理解已经非常深入，物理课肯定难不倒你！';stars='⭐⭐⭐⭐⭐';}
+  else if(pct>=75){title='🔦 优秀小物理学家！';sub='很棒的发挥！你对光的秘密理解很深，再复习几个细节就能满分。';stars='⭐⭐⭐⭐';}
+  else if(pct>=60){title='💡 不错的开始！';sub='你已经抓住了重点，把错题再看看，会更棒的！';stars='⭐⭐⭐';}
+  else{title='🌱 继续加油！';sub='光的秘密很奇妙，回去复习一遍再战，你一定行！';stars='⭐⭐';}
+  document.getElementById('liResultStars').textContent=stars;
+  document.getElementById('liResultTitle').textContent=title;
+  document.getElementById('liResultSub').textContent=sub;
+  document.getElementById('liFinalScore').textContent=liScore+'分';
+  res.classList.add('on');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function restartLIQuiz(){
+  liIdx=0;liScore=0;liAnswered=false;
+  document.getElementById('liQuizBody').style.display='block';
+  document.getElementById('liResult').classList.remove('on');
+  renderLI();
+}
+renderLI();
+
+/* ---------- 元素测验 ---------- */
+const EL_QUESTIONS=[
+  {q:"世界上所有物质大约由多少种基本元素组成？",opts:["几十万种","118 种","1000 种","8 种"],a:1,explain:"世界上所有物质都由约 118 种化学元素组成。"},
+  {q:"宇宙中最多的元素是？",opts:["氧","碳","氢","铁"],a:2,explain:"氢是宇宙中最多的元素，恒星靠氢聚变发光。"},
+  {q:"我们呼吸的空气里，哪种元素约占 21%？",opts:["碳","氧","氮","铁"],a:1,explain:"氧约占空气的 21%，是我们呼吸的关键。"},
+  {q:"钻石和石墨其实是同一种元素的“不同造型”，这种元素是？",opts:["碳","硅","金","铁"],a:0,explain:"钻石和石墨都是碳，只是碳原子的排列方式不同。"},
+  {q:"元素周期表是按什么排列的？",opts:["按颜色","按质量随机","按原子序数从小到大","按发现的先后"],a:2,explain:"元素周期表按原子序数从小到大排列，形成有规律的“藏宝图”。"},
+  {q:"你血液里的“红色”来自哪种元素？",opts:["碳","铁","铜","金"],a:1,explain:"血液的红色来自铁，血红蛋白里含有铁元素。"},
+  {q:"金（Au）为什么被做成首饰？",opts:["它最轻","它稀有又稳定，几乎不腐蚀","它导电差","它是液体"],a:1,explain:"金稀有又稳定、几乎不腐蚀，所以被做成首饰。"},
+  {q:"你身体里的碳、铁等元素是怎么来的？",opts:["凭空产生","来自恒星内部和超新星爆发","来自地球表面","来自月球"],a:1,explain:"很多元素诞生在恒星内部和超新星爆发中，所以我们是“星尘”。"}
+];
+const EL_PER=10;
+let elIdx=0,elScore=0,elAnswered=false;
+const elTotalQ=EL_QUESTIONS.length;
+document.getElementById('elTotalQ').textContent=elTotalQ;
+document.getElementById('elPerScore').textContent=EL_PER;
+function renderEL(){
+  const q=EL_QUESTIONS[elIdx];
+  const body=document.getElementById('elQuizBody');
+  body.innerHTML=`
+    <div class="q on">
+      <div class="q-title"><span class="qn">Q${elIdx+1}/${elTotalQ}</span>${q.q}</div>
+      <div class="opts">
+        ${q.opts.map((o,i)=>`<button class="opt" data-i="${i}" onclick="answerEL(${i})">${String.fromCharCode(65+i)}. ${o}</button>`).join('')}
+      </div>
+      <div class="feedback" id="elFb"></div>
+      <div class="q-actions">
+        <button class="btn" id="elNextBtn" onclick="nextEL()" disabled>下一题 ➡️</button>
+      </div>
+    </div>`;
+  document.getElementById('elLiveScore').textContent=elScore;
+}
+function answerEL(i){
+  if(elAnswered)return;
+  elAnswered=true;
+  const q=EL_QUESTIONS[elIdx];
+  const opts=document.querySelectorAll('#elQuizBody .opt');
+  const fb=document.getElementById('elFb');
+  opts.forEach((o,k)=>{o.disabled=true;if(k===q.a)o.classList.add('correct');if(k===i&&i!==q.a)o.classList.add('wrong');});
+  if(i===q.a){elScore+=EL_PER;fb.className='feedback show ok';fb.innerHTML=`🎉 <b>回答正确！</b> ${q.explain}`;}
+  else{fb.className='feedback show no';fb.innerHTML=`😅 <b>不对哦。</b> ${q.explain}`;}
+  document.getElementById('elLiveScore').textContent=elScore;
+  document.getElementById('elNextBtn').disabled=false;
+}
+function nextEL(){elIdx++;elAnswered=false;if(elIdx<elTotalQ){renderEL();}else{finishEL();}}
+function finishEL(){
+  const body=document.getElementById('elQuizBody');body.style.display='none';
+  const res=document.getElementById('elResult');
+  const pct=elScore/(elTotalQ*EL_PER)*100;
+  let title,sub,stars;
+  if(pct>=90){title='⚗️ 化学小博士！';sub='太强了！你已经认识了元素周期表，初中化学肯定一学就会！';stars='⭐⭐⭐⭐⭐';}
+  else if(pct>=75){title='🧪 优秀小化学家！';sub='很棒的发挥！你对元素理解很深，再复习几个细节就能满分。';stars='⭐⭐⭐⭐';}
+  else if(pct>=60){title='🔬 不错的开始！';sub='你已经抓住了重点，把错题再看看，会更棒的！';stars='⭐⭐⭐';}
+  else{title='🌱 继续加油！';sub='元素的世界很神奇，回去复习一遍再战，你一定行！';stars='⭐⭐';}
+  document.getElementById('elResultStars').textContent=stars;
+  document.getElementById('elResultTitle').textContent=title;
+  document.getElementById('elResultSub').textContent=sub;
+  document.getElementById('elFinalScore').textContent=elScore+'分';
+  res.classList.add('on');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function restartELQuiz(){
+  elIdx=0;elScore=0;elAnswered=false;
+  document.getElementById('elQuizBody').style.display='block';
+  document.getElementById('elResult').classList.remove('on');
+  renderEL();
+}
+renderEL();
 </script>
 </body>
 </html>
