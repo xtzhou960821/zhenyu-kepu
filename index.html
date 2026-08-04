@@ -221,6 +221,30 @@
     background:rgba(5,8,22,.6);padding:4px 12px;border-radius:20px;white-space:nowrap;
   }
 
+  /* 恒星演化流程动画 */
+  .star-flow{display:flex;flex-direction:column;gap:6px;padding:8px 0;max-width:640px;margin:0 auto}
+  .sf-stage{display:flex;align-items:center;gap:14px;padding:13px 18px;border-radius:14px;
+    background:rgba(255,255,255,.04);border:1px solid var(--card-border);animation:sfIn .5s ease both}
+  .sf-stage .dot{width:18px;height:18px;border-radius:50%;flex-shrink:0}
+  .sf-stage .txt{font-size:14px;line-height:1.5}
+  .sf-stage .txt b{color:var(--gold)}
+  .sf-stage .txt small{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+  .sf-arrow{color:var(--muted);font-size:18px;text-align:center;line-height:1;padding:2px 0;animation:sfIn .5s ease both}
+  @keyframes sfIn{from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:none}}
+  .sf-branch{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+  .sf-branch .sf-stage{flex:1;min-width:200px;animation-delay:.2s}
+  .sf-branch .sf-stage .txt b{color:var(--cyan)}
+  .sf-branch.end1 .sf-stage .txt b{color:var(--green)}
+  .sf-branch.end2 .sf-stage .txt b{color:var(--pink)}
+
+  /* 宇宙膨胀动画 */
+  .cosmos-box{position:relative;width:100%;height:360px;border-radius:var(--radius);
+    background:radial-gradient(circle at 50% 50%, #0a0f2c 0%, #050816 70%);
+    border:1px solid var(--card-border);overflow:hidden}
+  .cosmos-box canvas{position:absolute;inset:0}
+  .cosmos-box .cm-caption{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);
+    font-size:12px;color:var(--muted);background:rgba(5,8,22,.7);padding:4px 14px;border-radius:20px;white-space:nowrap;z-index:2}
+
   @media(max-width:560px){
     .nav{flex-wrap:wrap;gap:10px}
     .nav-links{margin-left:0;width:100%;justify-content:flex-start}
@@ -239,6 +263,8 @@
       <button class="active" data-tab="home">🏠 首页</button>
       <button data-tab="solar">🌞 太阳系</button>
       <button data-tab="blackhole">🕳️ 黑洞</button>
+      <button data-tab="stellar">⭐ 恒星</button>
+      <button data-tab="cosmos">🌌 宇宙</button>
       <button data-tab="quiz">📝 自我检测</button>
     </div>
   </div>
@@ -267,11 +293,17 @@
         <h3>自我检测</h3>
         <p>做几道题，看看你对太阳系了解多少，还能拿到分数哦！</p>
       </div>
-      <div class="t-card" onclick="soon()">
-        <span class="emoji">🚀</span>
-        <span class="tag soon">敬请期待</span>
+      <div class="t-card" onclick="go('stellar')">
+        <span class="emoji">⭐</span>
+        <span class="tag">已上线</span>
         <h3>恒星的一生</h3>
-        <p>恒星是怎么诞生、燃烧、最后演化的？下次更新见！</p>
+        <p>恒星怎么诞生、燃烧、最后演化？从星云到黑洞的宇宙传奇！</p>
+      </div>
+      <div class="t-card" onclick="go('cosmos')">
+        <span class="emoji">🌌</span>
+        <span class="tag">已上线</span>
+        <h3>宇宙的起源与大小</h3>
+        <p>138 亿年前的大爆炸，从夸克到整个宇宙，感受尺度之美！</p>
       </div>
       <div class="t-card" onclick="go('blackhole')">
         <span class="emoji">🕳️</span>
@@ -478,6 +510,179 @@
       </div>
     </div>
   </section>
+
+  <!-- 恒星的一生课程 -->
+  <section id="tab-stellar" class="tabpane" style="display:none">
+    <div class="lesson">
+      <h2><span class="no">01</span>恒星是什么？</h2>
+      <p class="sub">夜空里会发光的"大灯泡"</p>
+      <p>恒星（Star）是一颗巨大的、自身能<span class="hl">发光发热</span>的气体球。它靠内部的<span class="hl-gold">核聚变</span>反应产生能量——就像一座永远在燃烧的巨大核电站。</p>
+      <div class="grid-2">
+        <div class="fact"><div class="t">☀️ 太阳也是恒星</div><p>我们熟悉的太阳，就是一颗典型的恒星，而且是一颗中等大小的"普通恒星"。</p></div>
+        <div class="fact"><div class="t">🔆 星星为什么眨眼</div><p>我们看到的星星"闪烁"，其实不是星星自己在眨，而是星光穿过地球大气层时被晃动了。</p></div>
+      </div>
+      <div class="callout blue">💡 <b>关键</b>：恒星和行星最大的区别——恒星自己发光，行星自己不发光、只能反射光。</div>
+    </div>
+
+    <div class="lesson">
+      <h2><span class="no">02</span>恒星怎么诞生？</h2>
+      <p class="sub">从一团"云"开始的漫长旅程</p>
+      <p>恒星诞生于巨大的<span class="hl">星云</span>——由气体（主要是氢）和尘埃组成的云。在引力的作用下，星云慢慢收缩、变热……</p>
+      <ul>
+        <li><b>星云收缩</b>：物质在引力作用下向中心聚集。</li>
+        <li><b>变热变密</b>：中心的温度和压力越来越高。</li>
+        <li><b>点燃聚变</b>：当温度高到一定程度，氢原子开始聚变成氦，恒星就"点亮"了！</li>
+      </ul>
+      <div class="callout">🌟 这个过程叫<span class="hl-gold">恒星诞生</span>。星云→原恒星→主序星，一颗新的恒星就这样诞生了。</div>
+    </div>
+
+    <div class="lesson">
+      <h2><span class="no">03</span>主序星：恒星最"稳定"的时期</h2>
+      <p class="sub">恒星一生中占据最长的阶段</p>
+      <p>恒星一旦点燃核聚变，就会进入<span class="hl">主序星</span>阶段。这是恒星一生中最长、最稳定的时期，靠"氢燃烧"维持发光。</p>
+      <ul>
+        <li><b>太阳现在就是主序星</b>：已经稳定燃烧约 46 亿年。</li>
+        <li><b>还能烧很久</b>：预计太阳还能再稳定燃烧约 50 亿年。</li>
+        <li><b>质量决定寿命</b>：大质量的恒星烧得快、寿命短；小质量的恒星烧得慢、寿命长。</li>
+      </ul>
+      <div class="callout blue">💡 <b>冷知识</b>：越大的恒星反而"死"得越早！因为它的核聚变太剧烈，燃料消耗超快。</div>
+    </div>
+
+    <div class="lesson">
+      <h2><span class="no">04</span>恒星的死亡：结局由质量决定</h2>
+      <p class="sub">恒星"老了"之后会发生什么？</p>
+      <p>当氢燃料逐渐耗尽，恒星的命运取决于它的<span class="hl">质量</span>。质量不同，结局天差地别：</p>
+      <ul>
+        <li><b>小质量恒星（像太阳）</b>：先膨胀成<span class="hl">红巨星</span>，最后外层飘散成行星状星云，核心变成一颗小小的<span class="hl-gold">白矮星</span>。</li>
+        <li><b>大质量恒星</b>：会以一场壮观的<span class="hl">超新星爆发</span>结束生命，留下<span class="hl-gold">中子星</span>，甚至……<span class="hl-gold">黑洞</span>！</li>
+      </ul>
+      <div class="callout">🌀 还记得黑洞主题吗？黑洞——就是超大质量恒星死亡后的终极残骸。所有恒星的一生，最终都指向这里！</div>
+    </div>
+
+    <div class="lesson">
+      <h2><span class="no">05</span>恒星的一生流程图</h2>
+      <p class="sub">从星云到恒星，再到不同结局</p>
+      <div class="star-flow">
+        <div class="sf-stage" style="animation-delay:.1s"><span class="dot" style="background:#a78bfa;box-shadow:0 0 12px #a78bfa"></span><div class="txt"><b>星云</b><small>气体尘埃云 · 恒星诞生的摇篮</small></div></div>
+        <div class="sf-arrow">↓</div>
+        <div class="sf-stage" style="animation-delay:.25s"><span class="dot" style="background:#fbbf24;box-shadow:0 0 12px #fbbf24"></span><div class="txt"><b>原恒星</b><small>收缩变热 · 即将点燃</small></div></div>
+        <div class="sf-arrow">↓</div>
+        <div class="sf-stage" style="animation-delay:.4s"><span class="dot" style="background:#f97316;box-shadow:0 0 14px #f97316"></span><div class="txt"><b>主序星</b><small>稳定燃烧氢 · 一生最长的阶段（太阳在这里）</small></div></div>
+        <div class="sf-arrow">↓</div>
+        <div class="sf-branch">
+          <div class="sf-stage" style="animation-delay:.55s"><span class="dot" style="background:#34d399;box-shadow:0 0 10px #34d399"></span><div class="txt"><b>小质量 → 白矮星</b><small>红巨星 → 行星状星云 → 白矮星</small></div></div>
+          <div class="sf-stage" style="animation-delay:.7s"><span class="dot" style="background:#f472b6;box-shadow:0 0 12px #f472b6"></span><div class="txt"><b>大质量 → 黑洞</b><small>超新星爆发 → 中子星 / 黑洞</small></div></div>
+        </div>
+      </div>
+      <div class="callout blue">👀 <b>观察提示</b>：看这条生命线——所有恒星都从星云诞生，但因为质量不同，走向完全不同的终点。这就是恒星一生的全部秘密！</div>
+    </div>
+
+    <!-- 恒星测验 -->
+    <div class="lesson">
+      <div class="quiz-head">
+        <div>
+          <h2 style="margin-bottom:4px">⭐ 恒星知识闯关</h2>
+          <div class="info">共 <span id="stTotalQ"></span> 题 · 每题 <span id="stPerScore"></span> 分</div>
+        </div>
+        <div class="score-pill">🏆 当前得分：<span id="stLiveScore">0</span></div>
+      </div>
+      <div id="stQuizBody"></div>
+      <div id="stResult">
+        <div class="stars" id="stResultStars"></div>
+        <div class="big-score" id="stFinalScore">0</div>
+        <div class="result-title" id="stResultTitle"></div>
+        <div class="result-sub" id="stResultSub"></div>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+          <button class="btn" onclick="restartSTQuiz()">🔄 再来一次</button>
+          <button class="btn ghost" onclick="go('stellar')">📖 回去复习</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 宇宙起源与大小课程 -->
+  <section id="tab-cosmos" class="tabpane" style="display:none">
+    <div class="lesson">
+      <h2><span class="no">01</span>宇宙到底有多大？</h2>
+      <p class="sub">建立你的"尺度感"</p>
+      <p>宇宙大得难以想象。让我们从身边的尺度开始，一步步往上看：</p>
+      <ul>
+        <li><b>地球</b>：直径约 1.2 万公里——已经很大了对吧？但只是沧海一粟。</li>
+        <li><b>太阳系</b>：光从太阳到地球要 8 分钟，跨越整个太阳系要很多小时。</li>
+        <li><b>银河系</b>：直径约 10 万光年，里面有几千亿颗恒星！</li>
+        <li><b>可观测宇宙</b>：直径约 <span class="hl-gold">930 亿光年</span>，星系数以千亿计。</li>
+      </ul>
+      <div class="callout">📏 <b>什么是光年？</b>光年不是时间单位，而是<span class="hl">距离单位</span>——光在一年里走过的距离，约 9.46 万亿公里。</div>
+    </div>
+
+    <div class="lesson">
+      <h2><span class="no">02</span>宇宙是怎么诞生的？</h2>
+      <p class="sub">138 亿年前的"大爆炸"</p>
+      <p>主流的宇宙起源理论是<span class="hl">大爆炸理论（Big Bang）</span>。约 <span class="hl-gold">138 亿年前</span>，整个宇宙从一个极小、极热、极密的点开始，剧烈膨胀开来。</p>
+      <ul>
+        <li><b>不是"点上的爆炸"</b>：而是<span class="hl">空间本身</span>在膨胀，宇宙四面八方都在扩张。</li>
+        <li><b>最初极热</b>：温度高到物质都无法形成，只有能量。</li>
+        <li><b>逐渐冷却</b>：随着膨胀降温，才慢慢形成了物质、原子、恒星和星系。</li>
+      </ul>
+      <div class="callout blue">💡 <b>别误解</b>："大爆炸"不是宇宙里某处发生的一次爆炸，而是宇宙这个"空间"本身的诞生和膨胀。</div>
+    </div>
+
+    <div class="lesson">
+      <h2><span class="no">03</span>宇宙还在膨胀！</h2>
+      <p class="sub">哈勃的惊人发现</p>
+      <p>1929 年，天文学家<span class="hl">哈勃</span>发现：远处的星系都在<span class="hl-gold">远离我们</span>，而且离得越远，退得越快！</p>
+      <ul>
+        <li><b>红移</b>：星系发出的光被"拉长"、变红，说明它在远离我们。</li>
+        <li><b>宇宙在扩张</b>：就像面包里的葡萄干，面包膨胀时，葡萄干彼此远离——星系也一样。</li>
+        <li><b>没有"中心"</b>：宇宙的膨胀没有一个中心点，处处都在扩张。</li>
+      </ul>
+      <div class="callout">🚀 这个发现证明了宇宙<span class="hl">不是静止的</span>，而是在不断膨胀——也为"大爆炸"理论提供了重要证据。</div>
+    </div>
+
+    <div class="lesson">
+      <h2><span class="no">04</span>宇宙由什么组成？</h2>
+      <p class="sub">比你想的更神奇</p>
+      <p>我们平时能看到的物质，其实只占宇宙的一小部分：</p>
+      <div class="grid-2">
+        <div class="fact"><div class="t">⭐ 普通物质 ≈ 5%</div><p>我们熟悉的恒星、行星、人类……所有看得见的东西只占约 5%。</p></div>
+        <div class="fact"><div class="t">🌑 暗物质 ≈ 27%</div><p>看不见、摸不着，但它的引力影响着星系运动。科学家还不知道它到底是什么。</p></div>
+        <div class="fact"><div class="t">🌌 暗能量 ≈ 68%</div><p>一种神秘力量，正在让宇宙加速膨胀，是宇宙最大的"谜团"。</p></div>
+        <div class="fact"><div class="t">❓ 最大谜题</div><p>人类已知的宇宙，其实只占约 5%——剩下的 95%，等待你去探索！</p></div>
+      </div>
+    </div>
+
+    <div class="lesson">
+      <h2><span class="no">05</span>模拟宇宙膨胀</h2>
+      <p class="sub">感受大爆炸后空间的扩张（示意）</p>
+      <div class="cosmos-box" id="cosmosBox">
+        <canvas id="cosmosCanvas"></canvas>
+        <div class="cm-caption">大爆炸后 · 星系不断远离彼此</div>
+      </div>
+      <div class="callout blue">👀 <b>观察提示</b>：中心最亮的是"最初的点"，周围的星系正不断向四周扩张——而且离得越远，跑得越快，这正是哈勃的发现！</div>
+    </div>
+
+    <!-- 宇宙测验 -->
+    <div class="lesson">
+      <div class="quiz-head">
+        <div>
+          <h2 style="margin-bottom:4px">🌌 宇宙知识闯关</h2>
+          <div class="info">共 <span id="coTotalQ"></span> 题 · 每题 <span id="coPerScore"></span> 分</div>
+        </div>
+        <div class="score-pill">🏆 当前得分：<span id="coLiveScore">0</span></div>
+      </div>
+      <div id="coQuizBody"></div>
+      <div id="coResult">
+        <div class="stars" id="coResultStars"></div>
+        <div class="big-score" id="coFinalScore">0</div>
+        <div class="result-title" id="coResultTitle"></div>
+        <div class="result-sub" id="coResultSub"></div>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+          <button class="btn" onclick="restartCOQuiz()">🔄 再来一次</button>
+          <button class="btn ghost" onclick="go('cosmos')">📖 回去复习</button>
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
 
 <footer>
@@ -507,13 +712,18 @@
 })();
 
 /* ---------- 导航 ---------- */
-const tabs=['home','solar','quiz','blackhole'];
+const tabs=['home','solar','quiz','blackhole','stellar','cosmos'];
 function go(t){tabs.forEach(n=>{
   document.getElementById('tab-'+n).style.display=(n===t)?'block':'none';
 });
 document.querySelectorAll('.nav-links button').forEach(b=>b.classList.toggle('active',b.dataset.tab===t));
 // 切到太阳系页时重新布局轨道动画（容器此时才可见，宽高非0）
 if(t==='solar'&&window.solarLayout) setTimeout(window.solarLayout, 50);
+// 切到宇宙页时启动膨胀动画，离开时停止
+if(window.cosmosAnim){
+  if(t==='cosmos') setTimeout(window.cosmosAnim.start, 60);
+  else window.cosmosAnim.stop();
+}
 window.scrollTo({top:0,behavior:'smooth'});
 }
 document.querySelectorAll('.nav-links button').forEach(b=>b.onclick=()=>go(b.dataset.tab));
@@ -797,6 +1007,200 @@ function restartBHQuiz(){
   renderBH();
 }
 renderBH();
+
+/* ---------- 宇宙膨胀动画 ---------- */
+(function(){
+  const box=document.getElementById('cosmosBox');
+  if(!box) return;
+  const c=document.getElementById('cosmosCanvas');
+  const x=c.getContext('2d');
+  let w,h,parts=[],animId=null,started=false;
+  function resize(){
+    w=c.width=box.clientWidth||320;
+    h=c.height=box.clientHeight||360;
+  }
+  function spawn(){
+    parts=[];
+    const n=Math.floor(w/4);
+    for(let i=0;i<n;i++){
+      const ang=Math.random()*Math.PI*2;
+      const sp=0.2+Math.random()*1.8;
+      parts.push({ang,sp,dist:4+Math.random()*8,r:Math.random()*1.8+.5,a:Math.random()*.7+.3});
+    }
+  }
+  function draw(){
+    x.clearRect(0,0,w,h);
+    const cx=w/2,cy=h/2;
+    // 中心最初的点
+    const pulse=1+Math.sin(Date.now()/300)*.15;
+    x.globalAlpha=1;
+    x.fillStyle='#fffbe6';
+    x.beginPath();x.arc(cx,cy,6*pulse,0,7);x.fill();
+    x.fillStyle='rgba(255,214,77,.5)';
+    x.beginPath();x.arc(cx,cy,14*pulse,0,7);x.fill();
+    // 星系粒子不断外扩
+    for(const p of parts){
+      p.dist+=p.sp*1.2;
+      const px=cx+Math.cos(p.ang)*p.dist;
+      const py=cy+Math.sin(p.ang)*p.dist;
+      if(p.dist>Math.max(w,h)*.9){ p.dist=4+Math.random()*8; p.ang=Math.random()*Math.PI*2; }
+      x.globalAlpha=p.a;
+      x.fillStyle='#dbe6ff';
+      x.beginPath();x.arc(px,py,p.r,0,7);x.fill();
+    }
+    // 外层光晕
+    x.globalAlpha=.15;
+    x.fillStyle='#22d3ee';
+    x.beginPath();x.arc(cx,cy,Math.min(w,h)*.5,0,7);x.fill();
+  }
+  function loop(){draw();animId=requestAnimationFrame(loop);}
+  function start(){
+    if(started) return;
+    started=true;
+    resize();spawn();loop();
+  }
+  function stop(){if(animId){cancelAnimationFrame(animId);animId=null;}started=false;}
+  addEventListener('resize',()=>{if(started){resize();}});
+  window.cosmosAnim={start,stop};
+})();
+
+/* ---------- 恒星测验 ---------- */
+const ST_QUESTIONS=[
+  {q:"恒星和行星最大的区别是什么？",opts:["大小不同","恒星自己发光，行星反射光","颜色不同","位置不同"],a:1,explain:"恒星自己靠核聚变发光发热，行星自己不发光、只能反射恒星的光。"},
+  {q:"恒星主要靠什么反应发光发热？",opts:["燃烧煤油","核聚变","燃烧木材","太阳电池"],a:1,explain:"恒星内部的氢原子在高温高压下发生核聚变，产生巨大的能量。"},
+  {q:"恒星诞生于哪里？",opts:["黑洞","星云","地球","月球"],a:1,explain:"恒星诞生于巨大的星云——由气体（主要是氢）和尘埃组成的云。"},
+  {q:"太阳现在正处于恒星的哪个阶段？",opts:["星云","白矮星","主序星","黑洞"],a:2,explain:"太阳正处于主序星阶段，已经稳定燃烧约 46 亿年。"},
+  {q:"恒星一生中占据时间最长的阶段是？",opts:["主序星","红巨星","星云","白矮星"],a:0,explain:"主序星阶段靠氢燃烧维持，是恒星一生中最长、最稳定的时期。"},
+  {q:"像太阳这样的恒星，最终会变成什么？",opts:["黑洞","中子星","白矮星","红超巨星"],a:2,explain:"小质量恒星最终会变成一颗白矮星，而不是黑洞。"},
+  {q:"大质量恒星死亡时，会发生什么壮观现象？",opts:["慢慢熄灭","超新星爆发","变成行星","坠落"],a:1,explain:"大质量恒星以一场壮观的超新星爆发结束生命，可能留下中子星或黑洞。"},
+  {q:"越大的恒星，寿命通常越？",opts:["越长","越短","都一样","无法确定"],a:1,explain:"大质量恒星核聚变太剧烈，燃料消耗超快，反而死得更早！"}
+];
+const ST_PER=10;
+let stIdx=0,stScore=0,stAnswered=false;
+const stTotalQ=ST_QUESTIONS.length;
+document.getElementById('stTotalQ').textContent=stTotalQ;
+document.getElementById('stPerScore').textContent=ST_PER;
+function renderST(){
+  const q=ST_QUESTIONS[stIdx];
+  const body=document.getElementById('stQuizBody');
+  body.innerHTML=`
+    <div class="q on">
+      <div class="q-title"><span class="qn">Q${stIdx+1}/${stTotalQ}</span>${q.q}</div>
+      <div class="opts">
+        ${q.opts.map((o,i)=>`<button class="opt" data-i="${i}" onclick="answerST(${i})">${String.fromCharCode(65+i)}. ${o}</button>`).join('')}
+      </div>
+      <div class="feedback" id="stFb"></div>
+      <div class="q-actions">
+        <button class="btn" id="stNextBtn" onclick="nextST()" disabled>下一题 ➡️</button>
+      </div>
+    </div>`;
+  document.getElementById('stLiveScore').textContent=stScore;
+}
+function answerST(i){
+  if(stAnswered)return;
+  stAnswered=true;
+  const q=ST_QUESTIONS[stIdx];
+  const opts=document.querySelectorAll('#stQuizBody .opt');
+  const fb=document.getElementById('stFb');
+  opts.forEach((o,k)=>{o.disabled=true;if(k===q.a)o.classList.add('correct');if(k===i&&i!==q.a)o.classList.add('wrong');});
+  if(i===q.a){stScore+=ST_PER;fb.className='feedback show ok';fb.innerHTML=`🎉 <b>回答正确！</b> ${q.explain}`;}
+  else{fb.className='feedback show no';fb.innerHTML=`😅 <b>不对哦。</b> ${q.explain}`;}
+  document.getElementById('stLiveScore').textContent=stScore;
+  document.getElementById('stNextBtn').disabled=false;
+}
+function nextST(){stIdx++;stAnswered=false;if(stIdx<stTotalQ){renderST();}else{finishST();}}
+function finishST(){
+  const body=document.getElementById('stQuizBody');body.style.display='none';
+  const res=document.getElementById('stResult');
+  const pct=stScore/(stTotalQ*ST_PER)*100;
+  let title,sub,stars;
+  if(pct>=90){title='🌟 恒星专家！';sub='太厉害了！你完全掌握了恒星的诞生、燃烧和死亡，去当小小天文学家吧！';stars='⭐⭐⭐⭐⭐';}
+  else if(pct>=75){title='🔆 优秀观测员！';sub='很棒的发挥！你对恒星理解很深，再复习几个细节就能满分。';stars='⭐⭐⭐⭐';}
+  else if(pct>=60){title='☀️ 不错的开始！';sub='你已经理解了核心，把错题再看看，会越来越棒！';stars='⭐⭐⭐';}
+  else{title='🌱 继续加油！';sub='恒星的秘密很丰富，回去复习一遍再战，你一定行！';stars='⭐⭐';}
+  document.getElementById('stResultStars').textContent=stars;
+  document.getElementById('stResultTitle').textContent=title;
+  document.getElementById('stResultSub').textContent=sub;
+  document.getElementById('stFinalScore').textContent=stScore+'分';
+  res.classList.add('on');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function restartSTQuiz(){
+  stIdx=0;stScore=0;stAnswered=false;
+  document.getElementById('stQuizBody').style.display='block';
+  document.getElementById('stResult').classList.remove('on');
+  renderST();
+}
+renderST();
+
+/* ---------- 宇宙测验 ---------- */
+const CO_QUESTIONS=[
+  {q:"宇宙诞生于约多少年前的大爆炸？",opts:["46 亿年","138 亿年","10 亿年","500 亿年"],a:1,explain:"宇宙约诞生于 138 亿年前的“大爆炸”，从极小极热的一点开始膨胀。"},
+  {q:"光年是什么单位？",opts:["时间单位","距离单位","速度单位","质量单位"],a:1,explain:"光年是距离单位——光在一年里走过的距离，约 9.46 万亿公里。"},
+  {q:"银河系的直径大约是多少？",opts:["10 万光年","1000 光年","1 光年","100 亿光年"],a:0,explain:"银河系直径约 10 万光年，里面有几千亿颗恒星！"},
+  {q:"天文学家哈勃发现星系都在？",opts:["朝我们飞来","远离我们","静止不动","原地旋转"],a:1,explain:"1929 年哈勃发现远处的星系都在远离我们，而且离得越远退得越快。"},
+  {q:"星系发出的光被“拉长”变红，说明它在？",opts:["靠近我们","远离我们","静止","绕圈"],a:1,explain:"这种“红移”现象说明星系在远离我们，是宇宙膨胀的证据。"},
+  {q:"宇宙中我们能看到的普通物质约占多少？",opts:["约 95%","约 5%","约 50%","约 80%"],a:1,explain:"我们看得见的普通物质只占约 5%，剩下的是暗物质和暗能量。"},
+  {q:"让宇宙加速膨胀的神秘力量叫做？",opts:["黑洞","暗能量","引力波","磁力"],a:1,explain:"暗能量是一种神秘力量，约占宇宙的 68%，正在让宇宙加速膨胀。"},
+  {q:"宇宙的膨胀有什么特点？",opts:["有一个中心点","没有中心，处处都在扩张","只在某方向扩张","已经停止了"],a:1,explain:"宇宙的膨胀没有中心，就像面包膨胀时葡萄干彼此远离——处处都在扩张。"}
+];
+const CO_PER=10;
+let coIdx=0,coScore=0,coAnswered=false;
+const coTotalQ=CO_QUESTIONS.length;
+document.getElementById('coTotalQ').textContent=coTotalQ;
+document.getElementById('coPerScore').textContent=CO_PER;
+function renderCO(){
+  const q=CO_QUESTIONS[coIdx];
+  const body=document.getElementById('coQuizBody');
+  body.innerHTML=`
+    <div class="q on">
+      <div class="q-title"><span class="qn">Q${coIdx+1}/${coTotalQ}</span>${q.q}</div>
+      <div class="opts">
+        ${q.opts.map((o,i)=>`<button class="opt" data-i="${i}" onclick="answerCO(${i})">${String.fromCharCode(65+i)}. ${o}</button>`).join('')}
+      </div>
+      <div class="feedback" id="coFb"></div>
+      <div class="q-actions">
+        <button class="btn" id="coNextBtn" onclick="nextCO()" disabled>下一题 ➡️</button>
+      </div>
+    </div>`;
+  document.getElementById('coLiveScore').textContent=coScore;
+}
+function answerCO(i){
+  if(coAnswered)return;
+  coAnswered=true;
+  const q=CO_QUESTIONS[coIdx];
+  const opts=document.querySelectorAll('#coQuizBody .opt');
+  const fb=document.getElementById('coFb');
+  opts.forEach((o,k)=>{o.disabled=true;if(k===q.a)o.classList.add('correct');if(k===i&&i!==q.a)o.classList.add('wrong');});
+  if(i===q.a){coScore+=CO_PER;fb.className='feedback show ok';fb.innerHTML=`🎉 <b>回答正确！</b> ${q.explain}`;}
+  else{fb.className='feedback show no';fb.innerHTML=`😅 <b>不对哦。</b> ${q.explain}`;}
+  document.getElementById('coLiveScore').textContent=coScore;
+  document.getElementById('coNextBtn').disabled=false;
+}
+function nextCO(){coIdx++;coAnswered=false;if(coIdx<coTotalQ){renderCO();}else{finishCO();}}
+function finishCO(){
+  const body=document.getElementById('coQuizBody');body.style.display='none';
+  const res=document.getElementById('coResult');
+  const pct=coScore/(coTotalQ*CO_PER)*100;
+  let title,sub,stars;
+  if(pct>=90){title='🌌 宇宙博士！';sub='太强了！你对宇宙的理解已经超越了很多大人，星辰大海等你征服！';stars='⭐⭐⭐⭐⭐';}
+  else if(pct>=75){title='🚀 优秀宇宙探险家！';sub='很棒的发挥！你对宇宙了解很深，再复习几个细节就能满分。';stars='⭐⭐⭐⭐';}
+  else if(pct>=60){title='🔭 不错的开始！';sub='你已经抓住了重点，把错题再看看，会更棒的！';stars='⭐⭐⭐';}
+  else{title='🌱 继续加油！';sub='宇宙本来就神秘辽阔，回去复习一遍再战，你一定行！';stars='⭐⭐';}
+  document.getElementById('coResultStars').textContent=stars;
+  document.getElementById('coResultTitle').textContent=title;
+  document.getElementById('coResultSub').textContent=sub;
+  document.getElementById('coFinalScore').textContent=coScore+'分';
+  res.classList.add('on');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function restartCOQuiz(){
+  coIdx=0;coScore=0;coAnswered=false;
+  document.getElementById('coQuizBody').style.display='block';
+  document.getElementById('coResult').classList.remove('on');
+  renderCO();
+}
+renderCO();
 </script>
 </body>
 </html>
