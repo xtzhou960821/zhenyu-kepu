@@ -293,6 +293,53 @@
     .nav-links{margin-left:0;width:100%;justify-content:flex-start}
     .solar-box{min-height:320px}
   }
+
+  /* ---------- 🎨 画画 Tab ---------- */
+  .draw-wrap{max-width:760px;margin:0 auto}
+  .draw-stage{position:relative;border-radius:18px;overflow:hidden;
+    border:1px solid var(--card-border);background:#fff;
+    box-shadow:0 0 30px rgba(34,211,238,.12)}
+  .draw-stage canvas{display:block;width:100%;height:auto;touch-action:none;
+    cursor:crosshair;background:#fff}
+  .draw-toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;
+    justify-content:center;margin:14px 0 6px}
+  .draw-toolbar button{background:var(--card);border:1px solid var(--card-border);
+    color:var(--txt);padding:8px 14px;border-radius:12px;font-size:14px;cursor:pointer;
+    transition:.2s;font-family:inherit}
+  .draw-toolbar button:hover{background:rgba(34,211,238,.15);border-color:var(--cyan)}
+  .swatches{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;margin:8px 0}
+  .sw{width:30px;height:30px;border-radius:50%;cursor:pointer;border:2px solid transparent;
+    transition:.15s}
+  .sw:hover{transform:scale(1.15)}
+  .sw.active{border-color:#fff;box-shadow:0 0 0 2px var(--cyan)}
+  .size-row{display:flex;align-items:center;gap:8px;justify-content:center;margin:6px 0 12px}
+  .size-row button{width:34px;height:34px;border-radius:50%;background:var(--card);
+    border:1px solid var(--card-border);color:var(--txt);cursor:pointer;font-family:inherit;
+    display:flex;align-items:center;justify-content:center}
+  .size-dot{background:#fff;border-radius:50%}
+  .size-row button.active{border-color:var(--cyan);background:rgba(34,211,238,.15)}
+  .draw-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:12px 0}
+  .btn.ai{background:linear-gradient(90deg,var(--cyan),var(--purple));color:#fff;border:none;
+    font-size:16px;padding:12px 28px;border-radius:30px;cursor:pointer;font-weight:700;
+    transition:.2s;font-family:inherit;box-shadow:0 4px 20px rgba(34,211,238,.4)}
+  .btn.ai:hover{transform:translateY(-2px);box-shadow:0 6px 26px rgba(34,211,238,.55)}
+  .btn.ai:disabled{opacity:.55;cursor:not-allowed;transform:none}
+  .draw-hint{text-align:center;color:var(--muted);font-size:13px;margin:6px 0 4px}
+  .review-card{display:none;margin-top:18px;border-radius:16px;padding:22px;
+    background:linear-gradient(135deg,rgba(34,211,238,.1),rgba(167,139,250,.12));
+    border:1px solid var(--card-border)}
+  .review-card.on{display:block}
+  .review-score{font-size:52px;font-weight:800;text-align:center;color:var(--gold);
+    text-shadow:0 0 20px rgba(251,191,36,.4)}
+  .review-stars{text-align:center;font-size:26px;margin:6px 0 4px}
+  .review-name{text-align:center;font-size:20px;font-weight:700;color:#fff;margin-bottom:14px}
+  .review-block{background:rgba(0,0,0,.2);border-radius:12px;padding:12px 16px;margin-bottom:10px;font-size:15px;line-height:1.7}
+  .review-block b{color:var(--cyan)}
+  .review-encourage{margin-top:14px;padding:14px;border-radius:12px;background:rgba(251,191,36,.12);
+    border:1px solid rgba(251,191,36,.3);color:var(--gold);text-align:center;font-size:16px;font-weight:600}
+  .review-loading{text-align:center;color:var(--muted);font-size:15px;padding:16px}
+  .review-loading .spin{display:inline-block;animation:spin 1s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
@@ -314,6 +361,7 @@
       <button data-tab="light">🔦 光</button>
       <button data-tab="element">⚗️ 元素</button>
       <button data-tab="quiz">📝 自我检测</button>
+      <button data-tab="draw">🎨 画画</button>
     </div>
   </div>
 </header>
@@ -1272,6 +1320,57 @@
       </div>
     </div>
   </section>
+
+  <!-- 🎨 画画 Tab -->
+  <section id="tab-draw" class="tabpane" style="display:none">
+    <div class="lesson">
+      <h2><span class="no">🎨</span>珍羽的小画室</h2>
+      <p class="sub">用你的小手画出心中的宇宙！画完交给星星老师打分点评哦~</p>
+
+      <div class="draw-wrap">
+        <div class="draw-stage">
+          <canvas id="drawCanvas"></canvas>
+        </div>
+
+        <div class="swatches" id="swatches"></div>
+
+        <div class="size-row">
+          <button data-size="4" title="细笔"><span class="size-dot" style="width:4px;height:4px"></span></button>
+          <button data-size="8" class="active" title="中笔"><span class="size-dot" style="width:8px;height:8px"></span></button>
+          <button data-size="16" title="粗笔"><span class="size-dot" style="width:14px;height:14px"></span></button>
+          <button data-size="32" title="超大"><span class="size-dot" style="width:20px;height:20px"></span></button>
+        </div>
+
+        <div class="draw-toolbar">
+          <button id="btnEraser">🧽 橡皮</button>
+          <button id="btnUndo">↩️ 撤销</button>
+          <button id="btnClear">🗑️ 清空</button>
+        </div>
+
+        <div class="draw-hint">✏️ 选好颜色和笔刷，用手指在画布上自由涂鸦吧！</div>
+
+        <div class="draw-actions">
+          <button class="btn ai" id="btnSubmit">✨ 交给星星老师点评</button>
+        </div>
+
+        <div id="reviewLoading" class="review-loading" style="display:none">
+          <span class="spin">🎨</span> 星星老师正在认真欣赏你的画，稍等一下哦……
+        </div>
+
+        <div class="review-card" id="reviewCard">
+          <div class="review-score" id="revScore"></div>
+          <div class="review-stars" id="revStars"></div>
+          <div class="review-name" id="revName"></div>
+          <div class="review-block" id="revPraise"></div>
+          <div class="review-block" id="revSuggestion"></div>
+          <div class="review-encourage" id="revEncourage"></div>
+          <div class="draw-actions">
+            <button class="btn ai" onclick="drawReset(true)">🔄 再画一幅</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
 
 <footer>
@@ -1314,7 +1413,7 @@
 })();
 
 /* ---------- 导航 ---------- */
-const tabs=['home','solar','quiz','blackhole','stellar','cosmos','planets','cell','dino','light','element'];
+const tabs=['home','solar','quiz','blackhole','stellar','cosmos','planets','cell','dino','light','element','draw'];
 function go(t){tabs.forEach(n=>{
   document.getElementById('tab-'+n).style.display=(n===t)?'block':'none';
 });
@@ -2375,6 +2474,167 @@ function restartELQuiz(){
   renderEL();
 }
 renderEL();
+</script>
+
+<!-- 🎨 画画功能 -->
+<script>
+(function(){
+  // AI 点评后端地址（cloudflared 隧道）——若隧道重启需更新此地址
+  const API_URL = "https://ambien-signal-stay-constructed.trycloudflare.com";
+
+  const canvas = document.getElementById('drawCanvas');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+
+  // ---- 画布尺寸（高清适配，Retina）----
+  const W = 1400, H = 900;            // 逻辑尺寸（4:3）
+  const dpr = Math.min(window.devicePixelRatio||1, 3);
+  canvas.width = W*dpr;
+  canvas.height = H*dpr;
+  canvas.style.aspectRatio = W+' / '+H;
+  ctx.scale(dpr,dpr);
+
+  // 白底
+  ctx.fillStyle='#fff'; ctx.fillRect(0,0,W,H);
+
+  // ---- 工具状态 ----
+  const COLORS = ['#f43f5e','#fb923c','#facc15','#22c55e','#06b6d4','#3b82f6','#8b5cf6','#ec4899','#78350f','#64748b','#000000','#ffffff'];
+  let curColor = '#f43f5e';
+  let curSize = 8;
+  let erasing = false;
+  let drawing = false;
+  let undoStack = [];
+
+  // ---- 初始化色板 ----
+  const swWrap = document.getElementById('swatches');
+  COLORS.forEach((c,i)=>{
+    const s=document.createElement('div');
+    s.className='sw'+(i===0?' active':'');
+    s.style.background=c;
+    s.style.border=c==='#ffffff'?'2px solid #ccc':'2px solid transparent';
+    s.onclick=()=>{ curColor=c; erasing=false;
+      swWrap.querySelectorAll('.sw').forEach(x=>x.classList.remove('active'));
+      s.classList.add('active');
+      document.querySelectorAll('.size-row button').forEach(b=>b.classList.remove('active'));
+      document.querySelectorAll('.size-row button[data-size]').forEach(b=>{if(+b.dataset.size===curSize)b.classList.add('active');});
+      document.getElementById('btnEraser').textContent='🧽 橡皮';
+    };
+    swWrap.appendChild(s);
+  });
+
+  // ---- 笔刷大小 ----
+  document.querySelectorAll('.size-row button[data-size]').forEach(b=>{
+    b.onclick=()=>{ curSize=+b.dataset.size;
+      document.querySelectorAll('.size-row button[data-size]').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+    };
+  });
+
+  // 橡皮
+  document.getElementById('btnEraser').onclick=()=>{
+    erasing=!erasing;
+    const btn=document.getElementById('btnEraser');
+    btn.textContent = erasing ? '✏️ 画笔' : '🧽 橡皮';
+    if(erasing){ curColor='#ffffff'; }else{ curColor=COLORS[0]; }
+  };
+
+  // ---- 坐标换算（适配画布缩放/触控）----
+  function getPos(e){
+    const r=canvas.getBoundingClientRect();
+    const src=e.touches&&e.touches[0]?e.touches[0]:e;
+    return {
+      x:(src.clientX-r.left)/r.width*W,
+      y:(src.clientY-r.top)/r.height*H
+    };
+  }
+  function saveState(){
+    if(undoStack.length>30) undoStack.shift();
+    undoStack.push(canvas.toDataURL('image/png'));
+  }
+
+  function strokeTo(p, from){
+    ctx.lineCap='round'; ctx.lineJoin='round';
+    ctx.strokeStyle=curColor;
+    ctx.lineWidth=curSize;
+    ctx.beginPath();
+    ctx.moveTo(from.x,from.y);
+    ctx.lineTo(p.x,p.y);
+    ctx.stroke();
+  }
+
+  // ---- 触控/鼠标绘制（Pointer Events 同时支持手指和笔）----
+  function down(e){ e.preventDefault(); saveState(); drawing=true;
+    const p=getPos(e); ctx.fillStyle=curColor;
+    ctx.beginPath(); ctx.arc(p.x,p.y,curSize/2,0,Math.PI*2); ctx.fill();
+    canvas._last=p; }
+  function move(e){ e.preventDefault(); if(!drawing)return;
+    const p=getPos(e); strokeTo(p, canvas._last||p); canvas._last=p; }
+  function up(e){ e.preventDefault(); drawing=false; canvas._last=null; }
+
+  canvas.addEventListener('pointerdown',down);
+  canvas.addEventListener('pointermove',move);
+  canvas.addEventListener('pointerup',up);
+  canvas.addEventListener('pointerleave',up);
+  canvas.addEventListener('touchstart',e=>e.preventDefault(),{passive:false});
+  canvas.addEventListener('touchmove',e=>e.preventDefault(),{passive:false});
+
+  // ---- 撤销 / 清空 ----
+  document.getElementById('btnUndo').onclick=()=>{
+    const last=undoStack.pop(); if(!last)return;
+    const im=new Image(); im.onload=()=>{ ctx.setTransform(dpr,0,0,dpr,0,0); ctx.drawImage(im,0,0,W,H); };
+    im.src=last;
+  };
+  document.getElementById('btnClear').onclick=()=>{ saveState(); ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.fillStyle='#fff'; ctx.fillRect(0,0,W,H); };
+
+  // ---- 重置（用于“再画一幅”）----
+  window.drawReset = function(clearReview){
+    undoStack=[]; ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.fillStyle='#fff'; ctx.fillRect(0,0,W,H);
+    erasing=false; curColor=COLORS[0]; curSize=8;
+    document.getElementById('btnEraser').textContent='🧽 橡皮';
+    if(clearReview){ document.getElementById('reviewCard').classList.remove('on');
+      document.getElementById('btnSubmit').disabled=false; }
+  };
+
+  // ---- 提交给 AI 点评 ----
+  document.getElementById('btnSubmit').onclick=async ()=>{
+    const btn=document.getElementById('btnSubmit');
+    const loading=document.getElementById('reviewLoading');
+    btn.disabled=true; loading.style.display='block';
+    document.getElementById('reviewCard').classList.remove('on');
+    // 导出画布为小尺寸 JPEG（省流量，够识别即可）
+    const thumb=document.createElement('canvas');
+    thumb.width=640; const th=Math.round(640*H/W); thumb.height=th;
+    const tc=thumb.getContext('2d'); tc.fillStyle='#fff'; tc.fillRect(0,0,640,th);
+    tc.drawImage(canvas,0,0,640,th);
+    const b64=thumb.toDataURL('image/jpeg',0.85).split(',')[1];
+    try{
+      const resp=await fetch(API_URL+'/review',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({image_base64:b64, mime:'image/jpeg'})
+      });
+      if(!resp.ok) throw new Error('HTTP '+resp.status);
+      const d=await resp.json();
+      // 展示评分 + 点评
+      document.getElementById('revScore').textContent=d.score+'分';
+      let st=''; const sc=d.score||0;
+      st = sc>=90?'⭐⭐⭐⭐⭐':sc>=80?'⭐⭐⭐⭐':sc>=70?'⭐⭐⭐':'⭐⭐';
+      document.getElementById('revStars').textContent=st;
+      document.getElementById('revName').textContent='🎨 '+d.name;
+      document.getElementById('revPraise').innerHTML='<b>👍 星星老师的夸奖</b><br>'+d.praise;
+      document.getElementById('revSuggestion').innerHTML='<b>💡 小建议</b><br>'+d.suggestion;
+      document.getElementById('revEncourage').textContent='💖 '+d.encourage;
+      document.getElementById('reviewCard').classList.add('on');
+      window.scrollTo({top:document.getElementById('reviewCard').offsetTop-120,behavior:'smooth'});
+    }catch(err){
+      alert('😢 星星老师暂时没收到你的画，可能是网络问题，请稍后再试一次哦！\n('+err.message+')');
+    }finally{
+      btn.disabled=false; loading.style.display='none';
+    }
+  };
+})();
 </script>
 </body>
 </html>
