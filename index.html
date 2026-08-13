@@ -341,6 +341,11 @@
   .review-loading .spin{display:inline-block;animation:spin 1s linear infinite}
   @keyframes spin{to{transform:rotate(360deg)}}
 </style>
+<script>
+  window.ZHENYU_CONFIG = {
+    apiUrl: "https://ambien-signal-stay-constructed.trycloudflare.com"
+  };
+</script>
 </head>
 <body>
 <canvas id="stars"></canvas>
@@ -1551,73 +1556,111 @@ const QUESTIONS=[
 const PER=10;
 
 /* ---------- 测验逻辑 ---------- */
-let idx=0,score=0,answered=false;
-const totalQ=QUESTIONS.length;
-document.getElementById('totalQ').textContent=totalQ;
-document.getElementById('perScore').textContent=PER;
+function createQuiz(opts){
+  const base=opts.prefix||'quiz';
+  const ids={
+    total:base+'TotalQ',
+    per:base+'PerScore',
+    live:base+'LiveScore',
+    body:base+'QuizBody',
+    result:base+'Result',
+    finalScore:base+'FinalScore',
+    stars:base+'ResultStars',
+    title:base+'ResultTitle',
+    sub:base+'ResultSub',
+    fb:base+'Fb',
+    next:base+'NextBtn'
+  };
+  const state={idx:0,score:0,answered:false};
+  const totalQ=opts.questions.length;
 
-function render(){
-  const q=QUESTIONS[idx];
-  const body=document.getElementById('quizBody');
-  body.innerHTML=`
-    <div class="q on">
-      <div class="q-title"><span class="qn">Q${idx+1}/${totalQ}</span>${q.q}</div>
-      <div class="opts">
-        ${q.opts.map((o,i)=>`<button class="opt" data-i="${i}" onclick="answer(${i})">${String.fromCharCode(65+i)}. ${o}</button>`).join('')}
-      </div>
-      <div class="feedback" id="fb"></div>
-      <div class="q-actions">
-        <button class="btn" id="nextBtn" onclick="nextQ()" disabled>下一题 ➡️</button>
-      </div>
-    </div>`;
-  document.getElementById('liveScore').textContent=score;
-}
-function answer(i){
-  if(answered)return;
-  answered=true;
-  const q=QUESTIONS[idx];
-  const opts=document.querySelectorAll('.opt');
-  const fb=document.getElementById('fb');
-  opts.forEach((o,k)=>{
-    o.disabled=true;
-    if(k===q.a)o.classList.add('correct');
-    if(k===i&&i!==q.a)o.classList.add('wrong');
-  });
-  if(i===q.a){score+=PER;fb.className='feedback show ok';fb.innerHTML=`🎉 <b>回答正确！</b> ${q.explain}`;}
-  else{fb.className='feedback show no';fb.innerHTML=`😅 <b>不对哦。</b> ${q.explain}`;}
-  document.getElementById('liveScore').textContent=score;
-  document.getElementById('nextBtn').disabled=false;
-}
-function nextQ(){
-  idx++;answered=false;
-  if(idx<totalQ){render();}
-  else{finish();}
-}
-function finish(){
-  const body=document.getElementById('quizBody');
-  body.style.display='none';
-  const res=document.getElementById('result');
-  const pct=score/(totalQ*PER)*100;
-  document.getElementById('finalScore').textContent=score+'分';
-  let title,sub,stars;
-  if(pct>=90){title='🌟 天文小博士！';sub='太厉害了，周珍羽！你对太阳系的了解已经非常深入，未来可以挑战更多宇宙难题了！';stars='⭐⭐⭐⭐⭐';}
-  else if(pct>=75){title='🚀 优秀小探索家！';sub='很棒的成绩！你掌握了太阳系的精华，再复习一遍细节就能满分啦。';stars='⭐⭐⭐⭐';}
-  else if(pct>=60){title='🌍 不错的开始！';sub='你已经理解了核心内容，把几个错题再看看，会越来越棒的！';stars='⭐⭐⭐';}
-  else{title='🌱 继续加油！';sub='没关系，宇宙本来就很庞大。回到课程复习一遍，再战一次，你一定行！';stars='⭐⭐';}
-  document.getElementById('resultStars').textContent=stars;
-  document.getElementById('resultTitle').textContent=title;
-  document.getElementById('resultSub').textContent=sub;
-  document.getElementById('finalScore').textContent=score+'分';
-  res.classList.add('on');
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-function restartQuiz(){
-  idx=0;score=0;answered=false;
-  document.getElementById('quizBody').style.display='block';
-  document.getElementById('result').classList.remove('on');
+  document.getElementById(ids.total).textContent=totalQ;
+  document.getElementById(ids.per).textContent=opts.per;
+
+  function render(){
+    const q=opts.questions[state.idx];
+    const body=document.getElementById(ids.body);
+    body.innerHTML=`
+      <div class="q on">
+        <div class="q-title"><span class="qn">Q${state.idx+1}/${totalQ}</span>${q.q}</div>
+        <div class="opts">
+          ${q.opts.map((o,i)=>`<button class="opt" data-i="${i}" onclick="${opts.answerFn}(${i})">${String.fromCharCode(65+i)}. ${o}</button>`).join('')}
+        </div>
+        <div class="feedback" id="${ids.fb}"></div>
+        <div class="q-actions">
+          <button class="btn" id="${ids.next}" onclick="${opts.nextFn}()" disabled>下一题 ➡️</button>
+        </div>
+      </div>`;
+    document.getElementById(ids.live).textContent=state.score;
+  }
+
+  function answer(i){
+    if(state.answered)return;
+    state.answered=true;
+    const q=opts.questions[state.idx];
+    const optEls=document.querySelectorAll('#'+ids.body+' .opt');
+    const fb=document.getElementById(ids.fb);
+    optEls.forEach((o,k)=>{
+      o.disabled=true;
+      if(k===q.a)o.classList.add('correct');
+      if(k===i&&i!==q.a)o.classList.add('wrong');
+    });
+    if(i===q.a){state.score+=opts.per;fb.className='feedback show ok';fb.innerHTML=`🎉 <b>回答正确！</b> ${q.explain}`;}
+    else{fb.className='feedback show no';fb.innerHTML=`😅 <b>不对哦。</b> ${q.explain}`;}
+    document.getElementById(ids.live).textContent=state.score;
+    document.getElementById(ids.next).disabled=false;
+  }
+
+  function next(){
+    state.idx++;state.answered=false;
+    if(state.idx<totalQ){render();}
+    else{finish();}
+  }
+
+  function finish(){
+    const body=document.getElementById(ids.body);
+    body.style.display='none';
+    const res=document.getElementById(ids.result);
+    const pct=state.score/(totalQ*opts.per)*100;
+    let level=opts.levels[3];
+    if(pct>=90){level=opts.levels[0];}
+    else if(pct>=75){level=opts.levels[1];}
+    else if(pct>=60){level=opts.levels[2];}
+    document.getElementById(ids.stars).textContent=level.stars;
+    document.getElementById(ids.title).textContent=level.title;
+    document.getElementById(ids.sub).textContent=level.sub;
+    document.getElementById(ids.finalScore).textContent=state.score+'分';
+    res.classList.add('on');
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  function restart(){
+    state.idx=0;state.score=0;state.answered=false;
+    document.getElementById(ids.body).style.display='block';
+    document.getElementById(ids.result).classList.remove('on');
+    render();
+  }
+
+  window[opts.answerFn]=answer;
+  window[opts.nextFn]=next;
+  window[opts.restartFn]=restart;
   render();
 }
-render();
+
+createQuiz({
+  prefix:'',
+  questions:QUESTIONS,
+  per:PER,
+  answerFn:'answer',
+  nextFn:'nextQ',
+  restartFn:'restartQuiz',
+  levels:[
+    {title:'🌟 天文小博士！',sub:'太厉害了，周珍羽！你对太阳系的了解已经非常深入，未来可以挑战更多宇宙难题了！',stars:'⭐⭐⭐⭐⭐'},
+    {title:'🚀 优秀小探索家！',sub:'很棒的成绩！你掌握了太阳系的精华，再复习一遍细节就能满分啦。',stars:'⭐⭐⭐⭐'},
+    {title:'🌍 不错的开始！',sub:'你已经理解了核心内容，把几个错题再看看，会越来越棒的！',stars:'⭐⭐⭐'},
+    {title:'🌱 继续加油！',sub:'没关系，宇宙本来就很庞大。回到课程复习一遍，再战一次，你一定行！',stars:'⭐⭐'}
+  ]
+});
 
 /* ---------- 黑洞测验 ---------- */
 const BH_QUESTIONS=[
@@ -1663,71 +1706,20 @@ const BH_QUESTIONS=[
   }
 ];
 const BH_PER=10;
-let bhIdx=0,bhScore=0,bhAnswered=false;
-const bhTotalQ=BH_QUESTIONS.length;
-document.getElementById('bhTotalQ').textContent=bhTotalQ;
-document.getElementById('bhPerScore').textContent=BH_PER;
-function renderBH(){
-  const q=BH_QUESTIONS[bhIdx];
-  const body=document.getElementById('bhQuizBody');
-  body.innerHTML=`
-    <div class="q on">
-      <div class="q-title"><span class="qn">Q${bhIdx+1}/${bhTotalQ}</span>${q.q}</div>
-      <div class="opts">
-        ${q.opts.map((o,i)=>`<button class="opt" data-i="${i}" onclick="answerBH(${i})">${String.fromCharCode(65+i)}. ${o}</button>`).join('')}
-      </div>
-      <div class="feedback" id="bhFb"></div>
-      <div class="q-actions">
-        <button class="btn" id="bhNextBtn" onclick="nextBH()" disabled>下一题 ➡️</button>
-      </div>
-    </div>`;
-  document.getElementById('bhLiveScore').textContent=bhScore;
-}
-function answerBH(i){
-  if(bhAnswered)return;
-  bhAnswered=true;
-  const q=BH_QUESTIONS[bhIdx];
-  const opts=document.querySelectorAll('#bhQuizBody .opt');
-  const fb=document.getElementById('bhFb');
-  opts.forEach((o,k)=>{
-    o.disabled=true;
-    if(k===q.a)o.classList.add('correct');
-    if(k===i&&i!==q.a)o.classList.add('wrong');
-  });
-  if(i===q.a){bhScore+=BH_PER;fb.className='feedback show ok';fb.innerHTML=`🎉 <b>回答正确！</b> ${q.explain}`;}
-  else{fb.className='feedback show no';fb.innerHTML=`😅 <b>不对哦。</b> ${q.explain}`;}
-  document.getElementById('bhLiveScore').textContent=bhScore;
-  document.getElementById('bhNextBtn').disabled=false;
-}
-function nextBH(){
-  bhIdx++;bhAnswered=false;
-  if(bhIdx<bhTotalQ){renderBH();}
-  else{finishBH();}
-}
-function finishBH(){
-  const body=document.getElementById('bhQuizBody');
-  body.style.display='none';
-  const res=document.getElementById('bhResult');
-  const pct=bhScore/(bhTotalQ*BH_PER)*100;
-  let title,sub,stars;
-  if(pct>=90){title='🌌 黑洞研究专家！';sub='太强了，周珍羽！你已经掌握了黑洞的奥秘，可以去当小小天文学家了！';stars='⭐⭐⭐⭐⭐';}
-  else if(pct>=75){title='🕳️ 引力大师！';sub='很棒的发挥！你对黑洞理解得很深，再复习几个细节就能满分。';stars='⭐⭐⭐⭐';}
-  else if(pct>=60){title='🔭 不错的探索！';sub='你已经理解了核心，把错题再看一遍，会越来越强！';stars='⭐⭐⭐';}
-  else{title='🌱 继续加油！';sub='黑洞本来就深奥，回去把课程复习一遍再战，你一定行！';stars='⭐⭐';}
-  document.getElementById('bhResultStars').textContent=stars;
-  document.getElementById('bhResultTitle').textContent=title;
-  document.getElementById('bhResultSub').textContent=sub;
-  document.getElementById('bhFinalScore').textContent=bhScore+'分';
-  res.classList.add('on');
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-function restartBHQuiz(){
-  bhIdx=0;bhScore=0;bhAnswered=false;
-  document.getElementById('bhQuizBody').style.display='block';
-  document.getElementById('bhResult').classList.remove('on');
-  renderBH();
-}
-renderBH();
+createQuiz({
+  prefix:'bh',
+  questions:BH_QUESTIONS,
+  per:BH_PER,
+  answerFn:'answerBH',
+  nextFn:'nextBH',
+  restartFn:'restartBHQuiz',
+  levels:[
+    {title:'🌌 黑洞研究专家！',sub:'太强了，周珍羽！你已经掌握了黑洞的奥秘，可以去当小小天文学家了！',stars:'⭐⭐⭐⭐⭐'},
+    {title:'🕳️ 引力大师！',sub:'很棒的发挥！你对黑洞理解得很深，再复习几个细节就能满分。',stars:'⭐⭐⭐⭐'},
+    {title:'🔭 不错的探索！',sub:'你已经理解了核心，把错题再看一遍，会越来越强！',stars:'⭐⭐⭐'},
+    {title:'🌱 继续加油！',sub:'黑洞本来就深奥，回去把课程复习一遍再战，你一定行！',stars:'⭐⭐'}
+  ]
+});
 
 /* ---------- 宇宙膨胀动画 ---------- */
 (function(){
@@ -1797,62 +1789,20 @@ const ST_QUESTIONS=[
   {q:"越大的恒星，寿命通常越？",opts:["越长","越短","都一样","无法确定"],a:1,explain:"大质量恒星核聚变太剧烈，燃料消耗超快，反而死得更早！"}
 ];
 const ST_PER=10;
-let stIdx=0,stScore=0,stAnswered=false;
-const stTotalQ=ST_QUESTIONS.length;
-document.getElementById('stTotalQ').textContent=stTotalQ;
-document.getElementById('stPerScore').textContent=ST_PER;
-function renderST(){
-  const q=ST_QUESTIONS[stIdx];
-  const body=document.getElementById('stQuizBody');
-  body.innerHTML=`
-    <div class="q on">
-      <div class="q-title"><span class="qn">Q${stIdx+1}/${stTotalQ}</span>${q.q}</div>
-      <div class="opts">
-        ${q.opts.map((o,i)=>`<button class="opt" data-i="${i}" onclick="answerST(${i})">${String.fromCharCode(65+i)}. ${o}</button>`).join('')}
-      </div>
-      <div class="feedback" id="stFb"></div>
-      <div class="q-actions">
-        <button class="btn" id="stNextBtn" onclick="nextST()" disabled>下一题 ➡️</button>
-      </div>
-    </div>`;
-  document.getElementById('stLiveScore').textContent=stScore;
-}
-function answerST(i){
-  if(stAnswered)return;
-  stAnswered=true;
-  const q=ST_QUESTIONS[stIdx];
-  const opts=document.querySelectorAll('#stQuizBody .opt');
-  const fb=document.getElementById('stFb');
-  opts.forEach((o,k)=>{o.disabled=true;if(k===q.a)o.classList.add('correct');if(k===i&&i!==q.a)o.classList.add('wrong');});
-  if(i===q.a){stScore+=ST_PER;fb.className='feedback show ok';fb.innerHTML=`🎉 <b>回答正确！</b> ${q.explain}`;}
-  else{fb.className='feedback show no';fb.innerHTML=`😅 <b>不对哦。</b> ${q.explain}`;}
-  document.getElementById('stLiveScore').textContent=stScore;
-  document.getElementById('stNextBtn').disabled=false;
-}
-function nextST(){stIdx++;stAnswered=false;if(stIdx<stTotalQ){renderST();}else{finishST();}}
-function finishST(){
-  const body=document.getElementById('stQuizBody');body.style.display='none';
-  const res=document.getElementById('stResult');
-  const pct=stScore/(stTotalQ*ST_PER)*100;
-  let title,sub,stars;
-  if(pct>=90){title='🌟 恒星专家！';sub='太厉害了！你完全掌握了恒星的诞生、燃烧和死亡，去当小小天文学家吧！';stars='⭐⭐⭐⭐⭐';}
-  else if(pct>=75){title='🔆 优秀观测员！';sub='很棒的发挥！你对恒星理解很深，再复习几个细节就能满分。';stars='⭐⭐⭐⭐';}
-  else if(pct>=60){title='☀️ 不错的开始！';sub='你已经理解了核心，把错题再看看，会越来越棒！';stars='⭐⭐⭐';}
-  else{title='🌱 继续加油！';sub='恒星的秘密很丰富，回去复习一遍再战，你一定行！';stars='⭐⭐';}
-  document.getElementById('stResultStars').textContent=stars;
-  document.getElementById('stResultTitle').textContent=title;
-  document.getElementById('stResultSub').textContent=sub;
-  document.getElementById('stFinalScore').textContent=stScore+'分';
-  res.classList.add('on');
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-function restartSTQuiz(){
-  stIdx=0;stScore=0;stAnswered=false;
-  document.getElementById('stQuizBody').style.display='block';
-  document.getElementById('stResult').classList.remove('on');
-  renderST();
-}
-renderST();
+createQuiz({
+  prefix:'st',
+  questions:ST_QUESTIONS,
+  per:ST_PER,
+  answerFn:'answerST',
+  nextFn:'nextST',
+  restartFn:'restartSTQuiz',
+  levels:[
+    {title:'🌟 恒星专家！',sub:'太厉害了！你完全掌握了恒星的诞生、燃烧和死亡，去当小小天文学家吧！',stars:'⭐⭐⭐⭐⭐'},
+    {title:'🔆 优秀观测员！',sub:'很棒的发挥！你对恒星理解很深，再复习几个细节就能满分。',stars:'⭐⭐⭐⭐'},
+    {title:'☀️ 不错的开始！',sub:'你已经理解了核心，把错题再看看，会越来越棒！',stars:'⭐⭐⭐'},
+    {title:'🌱 继续加油！',sub:'恒星的秘密很丰富，回去复习一遍再战，你一定行！',stars:'⭐⭐'}
+  ]
+});
 
 /* ---------- 宇宙测验 ---------- */
 const CO_QUESTIONS=[
@@ -1866,62 +1816,20 @@ const CO_QUESTIONS=[
   {q:"宇宙的膨胀有什么特点？",opts:["有一个中心点","没有中心，处处都在扩张","只在某方向扩张","已经停止了"],a:1,explain:"宇宙的膨胀没有中心，就像面包膨胀时葡萄干彼此远离——处处都在扩张。"}
 ];
 const CO_PER=10;
-let coIdx=0,coScore=0,coAnswered=false;
-const coTotalQ=CO_QUESTIONS.length;
-document.getElementById('coTotalQ').textContent=coTotalQ;
-document.getElementById('coPerScore').textContent=CO_PER;
-function renderCO(){
-  const q=CO_QUESTIONS[coIdx];
-  const body=document.getElementById('coQuizBody');
-  body.innerHTML=`
-    <div class="q on">
-      <div class="q-title"><span class="qn">Q${coIdx+1}/${coTotalQ}</span>${q.q}</div>
-      <div class="opts">
-        ${q.opts.map((o,i)=>`<button class="opt" data-i="${i}" onclick="answerCO(${i})">${String.fromCharCode(65+i)}. ${o}</button>`).join('')}
-      </div>
-      <div class="feedback" id="coFb"></div>
-      <div class="q-actions">
-        <button class="btn" id="coNextBtn" onclick="nextCO()" disabled>下一题 ➡️</button>
-      </div>
-    </div>`;
-  document.getElementById('coLiveScore').textContent=coScore;
-}
-function answerCO(i){
-  if(coAnswered)return;
-  coAnswered=true;
-  const q=CO_QUESTIONS[coIdx];
-  const opts=document.querySelectorAll('#coQuizBody .opt');
-  const fb=document.getElementById('coFb');
-  opts.forEach((o,k)=>{o.disabled=true;if(k===q.a)o.classList.add('correct');if(k===i&&i!==q.a)o.classList.add('wrong');});
-  if(i===q.a){coScore+=CO_PER;fb.className='feedback show ok';fb.innerHTML=`🎉 <b>回答正确！</b> ${q.explain}`;}
-  else{fb.className='feedback show no';fb.innerHTML=`😅 <b>不对哦。</b> ${q.explain}`;}
-  document.getElementById('coLiveScore').textContent=coScore;
-  document.getElementById('coNextBtn').disabled=false;
-}
-function nextCO(){coIdx++;coAnswered=false;if(coIdx<coTotalQ){renderCO();}else{finishCO();}}
-function finishCO(){
-  const body=document.getElementById('coQuizBody');body.style.display='none';
-  const res=document.getElementById('coResult');
-  const pct=coScore/(coTotalQ*CO_PER)*100;
-  let title,sub,stars;
-  if(pct>=90){title='🌌 宇宙博士！';sub='太强了！你对宇宙的理解已经超越了很多大人，星辰大海等你征服！';stars='⭐⭐⭐⭐⭐';}
-  else if(pct>=75){title='🚀 优秀宇宙探险家！';sub='很棒的发挥！你对宇宙了解很深，再复习几个细节就能满分。';stars='⭐⭐⭐⭐';}
-  else if(pct>=60){title='🔭 不错的开始！';sub='你已经抓住了重点，把错题再看看，会更棒的！';stars='⭐⭐⭐';}
-  else{title='🌱 继续加油！';sub='宇宙本来就神秘辽阔，回去复习一遍再战，你一定行！';stars='⭐⭐';}
-  document.getElementById('coResultStars').textContent=stars;
-  document.getElementById('coResultTitle').textContent=title;
-  document.getElementById('coResultSub').textContent=sub;
-  document.getElementById('coFinalScore').textContent=coScore+'分';
-  res.classList.add('on');
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-function restartCOQuiz(){
-  coIdx=0;coScore=0;coAnswered=false;
-  document.getElementById('coQuizBody').style.display='block';
-  document.getElementById('coResult').classList.remove('on');
-  renderCO();
-}
-renderCO();
+createQuiz({
+  prefix:'co',
+  questions:CO_QUESTIONS,
+  per:CO_PER,
+  answerFn:'answerCO',
+  nextFn:'nextCO',
+  restartFn:'restartCOQuiz',
+  levels:[
+    {title:'🌌 宇宙博士！',sub:'太强了！你对宇宙的理解已经超越了很多大人，星辰大海等你征服！',stars:'⭐⭐⭐⭐⭐'},
+    {title:'🚀 优秀宇宙探险家！',sub:'很棒的发挥！你对宇宙了解很深，再复习几个细节就能满分。',stars:'⭐⭐⭐⭐'},
+    {title:'🔭 不错的开始！',sub:'你已经抓住了重点，把错题再看看，会更棒的！',stars:'⭐⭐⭐'},
+    {title:'🌱 继续加油！',sub:'宇宙本来就神秘辽阔，回去复习一遍再战，你一定行！',stars:'⭐⭐'}
+  ]
+});
 
 /* ---------- 行星大小对比动画 ---------- */
 (function(){
@@ -1963,62 +1871,20 @@ const PL_QUESTIONS=[
   {q:"下面哪颗是岩石行星？",opts:["木星","火星","土星","海王星"],a:1,explain:"水金地火四颗是岩石行星，火星是其中之一。"}
 ];
 const PL_PER=10;
-let plIdx=0,plScore=0,plAnswered=false;
-const plTotalQ=PL_QUESTIONS.length;
-document.getElementById('plTotalQ').textContent=plTotalQ;
-document.getElementById('plPerScore').textContent=PL_PER;
-function renderPL(){
-  const q=PL_QUESTIONS[plIdx];
-  const body=document.getElementById('plQuizBody');
-  body.innerHTML=`
-    <div class="q on">
-      <div class="q-title"><span class="qn">Q${plIdx+1}/${plTotalQ}</span>${q.q}</div>
-      <div class="opts">
-        ${q.opts.map((o,i)=>`<button class="opt" data-i="${i}" onclick="answerPL(${i})">${String.fromCharCode(65+i)}. ${o}</button>`).join('')}
-      </div>
-      <div class="feedback" id="plFb"></div>
-      <div class="q-actions">
-        <button class="btn" id="plNextBtn" onclick="nextPL()" disabled>下一题 ➡️</button>
-      </div>
-    </div>`;
-  document.getElementById('plLiveScore').textContent=plScore;
-}
-function answerPL(i){
-  if(plAnswered)return;
-  plAnswered=true;
-  const q=PL_QUESTIONS[plIdx];
-  const opts=document.querySelectorAll('#plQuizBody .opt');
-  const fb=document.getElementById('plFb');
-  opts.forEach((o,k)=>{o.disabled=true;if(k===q.a)o.classList.add('correct');if(k===i&&i!==q.a)o.classList.add('wrong');});
-  if(i===q.a){plScore+=PL_PER;fb.className='feedback show ok';fb.innerHTML=`🎉 <b>回答正确！</b> ${q.explain}`;}
-  else{fb.className='feedback show no';fb.innerHTML=`😅 <b>不对哦。</b> ${q.explain}`;}
-  document.getElementById('plLiveScore').textContent=plScore;
-  document.getElementById('plNextBtn').disabled=false;
-}
-function nextPL(){plIdx++;plAnswered=false;if(plIdx<plTotalQ){renderPL();}else{finishPL();}}
-function finishPL(){
-  const body=document.getElementById('plQuizBody');body.style.display='none';
-  const res=document.getElementById('plResult');
-  const pct=plScore/(plTotalQ*PL_PER)*100;
-  let title,sub,stars;
-  if(pct>=90){title='🪐 行星专家！';sub='太强了！八颗行星的秘密你全都掌握了，可以去当小小天文家了！';stars='⭐⭐⭐⭐⭐';}
-  else if(pct>=75){title='🌍 优秀小探索家！';sub='很棒的发挥！你对行星了解很深，再复习几个细节就能满分。';stars='⭐⭐⭐⭐';}
-  else if(pct>=60){title='🚀 不错的开始！';sub='你已经抓住了重点，把错题再看看，会更棒的！';stars='⭐⭐⭐';}
-  else{title='🌱 继续加油！';sub='八大行星的秘密很丰富，回去复习一遍再战，你一定行！';stars='⭐⭐';}
-  document.getElementById('plResultStars').textContent=stars;
-  document.getElementById('plResultTitle').textContent=title;
-  document.getElementById('plResultSub').textContent=sub;
-  document.getElementById('plFinalScore').textContent=plScore+'分';
-  res.classList.add('on');
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-function restartPLQuiz(){
-  plIdx=0;plScore=0;plAnswered=false;
-  document.getElementById('plQuizBody').style.display='block';
-  document.getElementById('plResult').classList.remove('on');
-  renderPL();
-}
-renderPL();
+createQuiz({
+  prefix:'pl',
+  questions:PL_QUESTIONS,
+  per:PL_PER,
+  answerFn:'answerPL',
+  nextFn:'nextPL',
+  restartFn:'restartPLQuiz',
+  levels:[
+    {title:'🪐 行星专家！',sub:'太强了！八颗行星的秘密你全都掌握了，可以去当小小天文家了！',stars:'⭐⭐⭐⭐⭐'},
+    {title:'🌍 优秀小探索家！',sub:'很棒的发挥！你对行星了解很深，再复习几个细节就能满分。',stars:'⭐⭐⭐⭐'},
+    {title:'🚀 不错的开始！',sub:'你已经抓住了重点，把错题再看看，会更棒的！',stars:'⭐⭐⭐'},
+    {title:'🌱 继续加油！',sub:'八大行星的秘密很丰富，回去复习一遍再战，你一定行！',stars:'⭐⭐'}
+  ]
+});
 
 /* ---------- 细胞分裂动画 ---------- */
 (function(){
@@ -2135,62 +2001,20 @@ const CEL_QUESTIONS=[
   {q:"以下哪种说法正确？",opts:["细菌全都是有害的","病毒能自己繁殖","肠道里有有益的益生菌","DNA 每个人完全一样"],a:2,explain:"很多细菌有益，比如肠道里的益生菌能帮我们消化。"}
 ];
 const CEL_PER=10;
-let celIdx=0,celScore=0,celAnswered=false;
-const celTotalQ=CEL_QUESTIONS.length;
-document.getElementById('celTotalQ').textContent=celTotalQ;
-document.getElementById('celPerScore').textContent=CEL_PER;
-function renderCEL(){
-  const q=CEL_QUESTIONS[celIdx];
-  const body=document.getElementById('celQuizBody');
-  body.innerHTML=`
-    <div class="q on">
-      <div class="q-title"><span class="qn">Q${celIdx+1}/${celTotalQ}</span>${q.q}</div>
-      <div class="opts">
-        ${q.opts.map((o,i)=>`<button class="opt" data-i="${i}" onclick="answerCEL(${i})">${String.fromCharCode(65+i)}. ${o}</button>`).join('')}
-      </div>
-      <div class="feedback" id="celFb"></div>
-      <div class="q-actions">
-        <button class="btn" id="celNextBtn" onclick="nextCEL()" disabled>下一题 ➡️</button>
-      </div>
-    </div>`;
-  document.getElementById('celLiveScore').textContent=celScore;
-}
-function answerCEL(i){
-  if(celAnswered)return;
-  celAnswered=true;
-  const q=CEL_QUESTIONS[celIdx];
-  const opts=document.querySelectorAll('#celQuizBody .opt');
-  const fb=document.getElementById('celFb');
-  opts.forEach((o,k)=>{o.disabled=true;if(k===q.a)o.classList.add('correct');if(k===i&&i!==q.a)o.classList.add('wrong');});
-  if(i===q.a){celScore+=CEL_PER;fb.className='feedback show ok';fb.innerHTML=`🎉 <b>回答正确！</b> ${q.explain}`;}
-  else{fb.className='feedback show no';fb.innerHTML=`😅 <b>不对哦。</b> ${q.explain}`;}
-  document.getElementById('celLiveScore').textContent=celScore;
-  document.getElementById('celNextBtn').disabled=false;
-}
-function nextCEL(){celIdx++;celAnswered=false;if(celIdx<celTotalQ){renderCEL();}else{finishCEL();}}
-function finishCEL(){
-  const body=document.getElementById('celQuizBody');body.style.display='none';
-  const res=document.getElementById('celResult');
-  const pct=celScore/(celTotalQ*CEL_PER)*100;
-  let title,sub,stars;
-  if(pct>=90){title='🧬 细胞专家！';sub='太强了！微观世界的秘密你全都懂了，生物课肯定难不倒你！';stars='⭐⭐⭐⭐⭐';}
-  else if(pct>=75){title='🔬 优秀小生物学家！';sub='很棒的发挥！你对细胞和免疫理解很深，再复习几个细节就能满分。';stars='⭐⭐⭐⭐';}
-  else if(pct>=60){title='🦠 不错的开始！';sub='你已经抓住了重点，把错题再看看，会更棒的！';stars='⭐⭐⭐';}
-  else{title='🌱 继续加油！';sub='微观世界很奇妙，回去复习一遍再战，你一定行！';stars='⭐⭐';}
-  document.getElementById('celResultStars').textContent=stars;
-  document.getElementById('celResultTitle').textContent=title;
-  document.getElementById('celResultSub').textContent=sub;
-  document.getElementById('celFinalScore').textContent=celScore+'分';
-  res.classList.add('on');
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-function restartCELQuiz(){
-  celIdx=0;celScore=0;celAnswered=false;
-  document.getElementById('celQuizBody').style.display='block';
-  document.getElementById('celResult').classList.remove('on');
-  renderCEL();
-}
-renderCEL();
+createQuiz({
+  prefix:'cel',
+  questions:CEL_QUESTIONS,
+  per:CEL_PER,
+  answerFn:'answerCEL',
+  nextFn:'nextCEL',
+  restartFn:'restartCELQuiz',
+  levels:[
+    {title:'🧬 细胞专家！',sub:'太强了！微观世界的秘密你全都懂了，生物课肯定难不倒你！',stars:'⭐⭐⭐⭐⭐'},
+    {title:'🔬 优秀小生物学家！',sub:'很棒的发挥！你对细胞和免疫理解很深，再复习几个细节就能满分。',stars:'⭐⭐⭐⭐'},
+    {title:'🦠 不错的开始！',sub:'你已经抓住了重点，把错题再看看，会更棒的！',stars:'⭐⭐⭐'},
+    {title:'🌱 继续加油！',sub:'微观世界很奇妙，回去复习一遍再战，你一定行！',stars:'⭐⭐'}
+  ]
+});
 
 /* ---------- 恐龙测验 ---------- */
 const DN_QUESTIONS=[
@@ -2204,62 +2028,20 @@ const DN_QUESTIONS=[
   {q:"三角龙头上有什么？",opts:["翅膀","三只角","鳞片","发光器"],a:1,explain:"三角龙头上有三只角，像恐龙里的犀牛，是霸王龙的劲敌。"}
 ];
 const DN_PER=10;
-let dnIdx=0,dnScore=0,dnAnswered=false;
-const dnTotalQ=DN_QUESTIONS.length;
-document.getElementById('dnTotalQ').textContent=dnTotalQ;
-document.getElementById('dnPerScore').textContent=DN_PER;
-function renderDN(){
-  const q=DN_QUESTIONS[dnIdx];
-  const body=document.getElementById('dnQuizBody');
-  body.innerHTML=`
-    <div class="q on">
-      <div class="q-title"><span class="qn">Q${dnIdx+1}/${dnTotalQ}</span>${q.q}</div>
-      <div class="opts">
-        ${q.opts.map((o,i)=>`<button class="opt" data-i="${i}" onclick="answerDN(${i})">${String.fromCharCode(65+i)}. ${o}</button>`).join('')}
-      </div>
-      <div class="feedback" id="dnFb"></div>
-      <div class="q-actions">
-        <button class="btn" id="dnNextBtn" onclick="nextDN()" disabled>下一题 ➡️</button>
-      </div>
-    </div>`;
-  document.getElementById('dnLiveScore').textContent=dnScore;
-}
-function answerDN(i){
-  if(dnAnswered)return;
-  dnAnswered=true;
-  const q=DN_QUESTIONS[dnIdx];
-  const opts=document.querySelectorAll('#dnQuizBody .opt');
-  const fb=document.getElementById('dnFb');
-  opts.forEach((o,k)=>{o.disabled=true;if(k===q.a)o.classList.add('correct');if(k===i&&i!==q.a)o.classList.add('wrong');});
-  if(i===q.a){dnScore+=DN_PER;fb.className='feedback show ok';fb.innerHTML=`🎉 <b>回答正确！</b> ${q.explain}`;}
-  else{fb.className='feedback show no';fb.innerHTML=`😅 <b>不对哦。</b> ${q.explain}`;}
-  document.getElementById('dnLiveScore').textContent=dnScore;
-  document.getElementById('dnNextBtn').disabled=false;
-}
-function nextDN(){dnIdx++;dnAnswered=false;if(dnIdx<dnTotalQ){renderDN();}else{finishDN();}}
-function finishDN(){
-  const body=document.getElementById('dnQuizBody');body.style.display='none';
-  const res=document.getElementById('dnResult');
-  const pct=dnScore/(dnTotalQ*DN_PER)*100;
-  let title,sub,stars;
-  if(pct>=90){title='🦖 恐龙专家！';sub='太强了！你对恐龙的了解比很多大人都厉害，古生物学家都要请教你！';stars='⭐⭐⭐⭐⭐';}
-  else if(pct>=75){title='🦕 优秀古生物学家！';sub='很棒的发挥！你对恐龙理解很深，再复习几个细节就能满分。';stars='⭐⭐⭐⭐';}
-  else if(pct>=60){title='🌋 不错的开始！';sub='你已经抓住了重点，把错题再看看，会更棒的！';stars='⭐⭐⭐';}
-  else{title='🌱 继续加油！';sub='恐龙的世界很精彩，回去复习一遍再战，你一定行！';stars='⭐⭐';}
-  document.getElementById('dnResultStars').textContent=stars;
-  document.getElementById('dnResultTitle').textContent=title;
-  document.getElementById('dnResultSub').textContent=sub;
-  document.getElementById('dnFinalScore').textContent=dnScore+'分';
-  res.classList.add('on');
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-function restartDNQuiz(){
-  dnIdx=0;dnScore=0;dnAnswered=false;
-  document.getElementById('dnQuizBody').style.display='block';
-  document.getElementById('dnResult').classList.remove('on');
-  renderDN();
-}
-renderDN();
+createQuiz({
+  prefix:'dn',
+  questions:DN_QUESTIONS,
+  per:DN_PER,
+  answerFn:'answerDN',
+  nextFn:'nextDN',
+  restartFn:'restartDNQuiz',
+  levels:[
+    {title:'🦖 恐龙专家！',sub:'太强了！你对恐龙的了解比很多大人都厉害，古生物学家都要请教你！',stars:'⭐⭐⭐⭐⭐'},
+    {title:'🦕 优秀古生物学家！',sub:'很棒的发挥！你对恐龙理解很深，再复习几个细节就能满分。',stars:'⭐⭐⭐⭐'},
+    {title:'🌋 不错的开始！',sub:'你已经抓住了重点，把错题再看看，会更棒的！',stars:'⭐⭐⭐'},
+    {title:'🌱 继续加油！',sub:'恐龙的世界很精彩，回去复习一遍再战，你一定行！',stars:'⭐⭐'}
+  ]
+});
 
 /* ---------- 光的色散动画 ---------- */
 (function(){
@@ -2349,62 +2131,20 @@ const LI_QUESTIONS=[
   {q:"彩虹是怎么形成的？",opts:["画画画的","雨滴像小棱镜把阳光分解成七色","月亮的功劳","火山喷发"],a:1,explain:"雨后小水滴像无数棱镜，把阳光色散成七彩，就形成了彩虹。"}
 ];
 const LI_PER=10;
-let liIdx=0,liScore=0,liAnswered=false;
-const liTotalQ=LI_QUESTIONS.length;
-document.getElementById('liTotalQ').textContent=liTotalQ;
-document.getElementById('liPerScore').textContent=LI_PER;
-function renderLI(){
-  const q=LI_QUESTIONS[liIdx];
-  const body=document.getElementById('liQuizBody');
-  body.innerHTML=`
-    <div class="q on">
-      <div class="q-title"><span class="qn">Q${liIdx+1}/${liTotalQ}</span>${q.q}</div>
-      <div class="opts">
-        ${q.opts.map((o,i)=>`<button class="opt" data-i="${i}" onclick="answerLI(${i})">${String.fromCharCode(65+i)}. ${o}</button>`).join('')}
-      </div>
-      <div class="feedback" id="liFb"></div>
-      <div class="q-actions">
-        <button class="btn" id="liNextBtn" onclick="nextLI()" disabled>下一题 ➡️</button>
-      </div>
-    </div>`;
-  document.getElementById('liLiveScore').textContent=liScore;
-}
-function answerLI(i){
-  if(liAnswered)return;
-  liAnswered=true;
-  const q=LI_QUESTIONS[liIdx];
-  const opts=document.querySelectorAll('#liQuizBody .opt');
-  const fb=document.getElementById('liFb');
-  opts.forEach((o,k)=>{o.disabled=true;if(k===q.a)o.classList.add('correct');if(k===i&&i!==q.a)o.classList.add('wrong');});
-  if(i===q.a){liScore+=LI_PER;fb.className='feedback show ok';fb.innerHTML=`🎉 <b>回答正确！</b> ${q.explain}`;}
-  else{fb.className='feedback show no';fb.innerHTML=`😅 <b>不对哦。</b> ${q.explain}`;}
-  document.getElementById('liLiveScore').textContent=liScore;
-  document.getElementById('liNextBtn').disabled=false;
-}
-function nextLI(){liIdx++;liAnswered=false;if(liIdx<liTotalQ){renderLI();}else{finishLI();}}
-function finishLI(){
-  const body=document.getElementById('liQuizBody');body.style.display='none';
-  const res=document.getElementById('liResult');
-  const pct=liScore/(liTotalQ*LI_PER)*100;
-  let title,sub,stars;
-  if(pct>=90){title='🌈 光学大师！';sub='太强了！你对光的理解已经非常深入，物理课肯定难不倒你！';stars='⭐⭐⭐⭐⭐';}
-  else if(pct>=75){title='🔦 优秀小物理学家！';sub='很棒的发挥！你对光的秘密理解很深，再复习几个细节就能满分。';stars='⭐⭐⭐⭐';}
-  else if(pct>=60){title='💡 不错的开始！';sub='你已经抓住了重点，把错题再看看，会更棒的！';stars='⭐⭐⭐';}
-  else{title='🌱 继续加油！';sub='光的秘密很奇妙，回去复习一遍再战，你一定行！';stars='⭐⭐';}
-  document.getElementById('liResultStars').textContent=stars;
-  document.getElementById('liResultTitle').textContent=title;
-  document.getElementById('liResultSub').textContent=sub;
-  document.getElementById('liFinalScore').textContent=liScore+'分';
-  res.classList.add('on');
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-function restartLIQuiz(){
-  liIdx=0;liScore=0;liAnswered=false;
-  document.getElementById('liQuizBody').style.display='block';
-  document.getElementById('liResult').classList.remove('on');
-  renderLI();
-}
-renderLI();
+createQuiz({
+  prefix:'li',
+  questions:LI_QUESTIONS,
+  per:LI_PER,
+  answerFn:'answerLI',
+  nextFn:'nextLI',
+  restartFn:'restartLIQuiz',
+  levels:[
+    {title:'🌈 光学大师！',sub:'太强了！你对光的理解已经非常深入，物理课肯定难不倒你！',stars:'⭐⭐⭐⭐⭐'},
+    {title:'🔦 优秀小物理学家！',sub:'很棒的发挥！你对光的秘密理解很深，再复习几个细节就能满分。',stars:'⭐⭐⭐⭐'},
+    {title:'💡 不错的开始！',sub:'你已经抓住了重点，把错题再看看，会更棒的！',stars:'⭐⭐⭐'},
+    {title:'🌱 继续加油！',sub:'光的秘密很奇妙，回去复习一遍再战，你一定行！',stars:'⭐⭐'}
+  ]
+});
 
 /* ---------- 元素测验 ---------- */
 const EL_QUESTIONS=[
@@ -2418,69 +2158,27 @@ const EL_QUESTIONS=[
   {q:"你身体里的碳、铁等元素是怎么来的？",opts:["凭空产生","来自恒星内部和超新星爆发","来自地球表面","来自月球"],a:1,explain:"很多元素诞生在恒星内部和超新星爆发中，所以我们是“星尘”。"}
 ];
 const EL_PER=10;
-let elIdx=0,elScore=0,elAnswered=false;
-const elTotalQ=EL_QUESTIONS.length;
-document.getElementById('elTotalQ').textContent=elTotalQ;
-document.getElementById('elPerScore').textContent=EL_PER;
-function renderEL(){
-  const q=EL_QUESTIONS[elIdx];
-  const body=document.getElementById('elQuizBody');
-  body.innerHTML=`
-    <div class="q on">
-      <div class="q-title"><span class="qn">Q${elIdx+1}/${elTotalQ}</span>${q.q}</div>
-      <div class="opts">
-        ${q.opts.map((o,i)=>`<button class="opt" data-i="${i}" onclick="answerEL(${i})">${String.fromCharCode(65+i)}. ${o}</button>`).join('')}
-      </div>
-      <div class="feedback" id="elFb"></div>
-      <div class="q-actions">
-        <button class="btn" id="elNextBtn" onclick="nextEL()" disabled>下一题 ➡️</button>
-      </div>
-    </div>`;
-  document.getElementById('elLiveScore').textContent=elScore;
-}
-function answerEL(i){
-  if(elAnswered)return;
-  elAnswered=true;
-  const q=EL_QUESTIONS[elIdx];
-  const opts=document.querySelectorAll('#elQuizBody .opt');
-  const fb=document.getElementById('elFb');
-  opts.forEach((o,k)=>{o.disabled=true;if(k===q.a)o.classList.add('correct');if(k===i&&i!==q.a)o.classList.add('wrong');});
-  if(i===q.a){elScore+=EL_PER;fb.className='feedback show ok';fb.innerHTML=`🎉 <b>回答正确！</b> ${q.explain}`;}
-  else{fb.className='feedback show no';fb.innerHTML=`😅 <b>不对哦。</b> ${q.explain}`;}
-  document.getElementById('elLiveScore').textContent=elScore;
-  document.getElementById('elNextBtn').disabled=false;
-}
-function nextEL(){elIdx++;elAnswered=false;if(elIdx<elTotalQ){renderEL();}else{finishEL();}}
-function finishEL(){
-  const body=document.getElementById('elQuizBody');body.style.display='none';
-  const res=document.getElementById('elResult');
-  const pct=elScore/(elTotalQ*EL_PER)*100;
-  let title,sub,stars;
-  if(pct>=90){title='⚗️ 化学小博士！';sub='太强了！你已经认识了元素周期表，初中化学肯定一学就会！';stars='⭐⭐⭐⭐⭐';}
-  else if(pct>=75){title='🧪 优秀小化学家！';sub='很棒的发挥！你对元素理解很深，再复习几个细节就能满分。';stars='⭐⭐⭐⭐';}
-  else if(pct>=60){title='🔬 不错的开始！';sub='你已经抓住了重点，把错题再看看，会更棒的！';stars='⭐⭐⭐';}
-  else{title='🌱 继续加油！';sub='元素的世界很神奇，回去复习一遍再战，你一定行！';stars='⭐⭐';}
-  document.getElementById('elResultStars').textContent=stars;
-  document.getElementById('elResultTitle').textContent=title;
-  document.getElementById('elResultSub').textContent=sub;
-  document.getElementById('elFinalScore').textContent=elScore+'分';
-  res.classList.add('on');
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-function restartELQuiz(){
-  elIdx=0;elScore=0;elAnswered=false;
-  document.getElementById('elQuizBody').style.display='block';
-  document.getElementById('elResult').classList.remove('on');
-  renderEL();
-}
-renderEL();
+createQuiz({
+  prefix:'el',
+  questions:EL_QUESTIONS,
+  per:EL_PER,
+  answerFn:'answerEL',
+  nextFn:'nextEL',
+  restartFn:'restartELQuiz',
+  levels:[
+    {title:'⚗️ 化学小博士！',sub:'太强了！你已经认识了元素周期表，初中化学肯定一学就会！',stars:'⭐⭐⭐⭐⭐'},
+    {title:'🧪 优秀小化学家！',sub:'很棒的发挥！你对元素理解很深，再复习几个细节就能满分。',stars:'⭐⭐⭐⭐'},
+    {title:'🔬 不错的开始！',sub:'你已经抓住了重点，把错题再看看，会更棒的！',stars:'⭐⭐⭐'},
+    {title:'🌱 继续加油！',sub:'元素的世界很神奇，回去复习一遍再战，你一定行！',stars:'⭐⭐'}
+  ]
+});
 </script>
 
 <!-- 🎨 画画功能 -->
 <script>
 (function(){
-  // AI 点评后端地址（cloudflared 隧道）——若隧道重启需更新此地址
-  const API_URL = "https://ambien-signal-stay-constructed.trycloudflare.com";
+  // AI 点评后端地址，统一从 ZHENYU_CONFIG 读取；隧道地址更新时只需改顶部配置
+  const API_URL = (window.ZHENYU_CONFIG && window.ZHENYU_CONFIG.apiUrl) || "";
 
   const canvas = document.getElementById('drawCanvas');
   if(!canvas) return;
@@ -2610,6 +2308,9 @@ renderEL();
     tc.drawImage(canvas,0,0,640,th);
     const b64=thumb.toDataURL('image/jpeg',0.85).split(',')[1];
     try{
+      if(!API_URL){
+        throw new Error('点评服务暂未配置');
+      }
       const resp=await fetch(API_URL+'/review',{
         method:'POST',
         headers:{'Content-Type':'application/json'},
@@ -2617,19 +2318,22 @@ renderEL();
       });
       if(!resp.ok) throw new Error('HTTP '+resp.status);
       const d=await resp.json();
+      if(!d || typeof d.score!=='number' || !d.name || !d.praise || !d.suggestion || !d.encourage){
+        throw new Error('点评数据不完整');
+      }
       // 展示评分 + 点评
       document.getElementById('revScore').textContent=d.score+'分';
       let st=''; const sc=d.score||0;
       st = sc>=90?'⭐⭐⭐⭐⭐':sc>=80?'⭐⭐⭐⭐':sc>=70?'⭐⭐⭐':'⭐⭐';
       document.getElementById('revStars').textContent=st;
       document.getElementById('revName').textContent='🎨 '+d.name;
-      document.getElementById('revPraise').innerHTML='<b>👍 星星老师的夸奖</b><br>'+d.praise;
-      document.getElementById('revSuggestion').innerHTML='<b>💡 小建议</b><br>'+d.suggestion;
+      document.getElementById('revPraise').textContent='👍 星星老师的夸奖\n'+d.praise;
+      document.getElementById('revSuggestion').textContent='💡 小建议\n'+d.suggestion;
       document.getElementById('revEncourage').textContent='💖 '+d.encourage;
       document.getElementById('reviewCard').classList.add('on');
       window.scrollTo({top:document.getElementById('reviewCard').offsetTop-120,behavior:'smooth'});
     }catch(err){
-      alert('😢 星星老师暂时没收到你的画，可能是网络问题，请稍后再试一次哦！\n('+err.message+')');
+      alert('😢 星星老师暂时没收到你的画，可能是网络问题，请稍后再试一次哦！');
     }finally{
       btn.disabled=false; loading.style.display='none';
     }
