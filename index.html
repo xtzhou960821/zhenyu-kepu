@@ -172,8 +172,8 @@
   .btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
 
   /* 结果页 */
-  #result,#bhResult{display:none;text-align:center;padding:30px 10px}
-  #result.on,#bhResult.on{display:block;animation:fadeIn .6s}
+  #result,#bhResult,#stResult,#coResult,#plResult,#celResult,#dnResult,#liResult,#elResult{display:none;text-align:center;padding:30px 10px}
+  #result.on,#bhResult.on,#stResult.on,#coResult.on,#plResult.on,#celResult.on,#dnResult.on,#liResult.on,#elResult.on{display:block;animation:fadeIn .6s}
   .big-score{font-size:clamp(60px,12vw,96px);font-weight:800;
     background:linear-gradient(120deg,#34d399,#22d3ee,#a78bfa);
     -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;line-height:1}
@@ -1557,19 +1557,19 @@ const PER=10;
 
 /* ---------- 测验逻辑 ---------- */
 function createQuiz(opts){
-  const base=opts.prefix||'quiz';
+  const base=opts.prefix !== undefined ? opts.prefix : 'quiz';
   const ids={
-    total:base+'TotalQ',
-    per:base+'PerScore',
-    live:base+'LiveScore',
-    body:base+'QuizBody',
-    result:base+'Result',
-    finalScore:base+'FinalScore',
-    stars:base+'ResultStars',
-    title:base+'ResultTitle',
-    sub:base+'ResultSub',
-    fb:base+'Fb',
-    next:base+'NextBtn'
+    total: base ? base+'TotalQ' : 'totalQ',
+    per: base ? base+'PerScore' : 'perScore',
+    live: base ? base+'LiveScore' : 'liveScore',
+    body: base ? base+'QuizBody' : 'quizBody',
+    result: base ? base+'Result' : 'result',
+    finalScore: base ? base+'FinalScore' : 'finalScore',
+    stars: base ? base+'ResultStars' : 'resultStars',
+    title: base ? base+'ResultTitle' : 'resultTitle',
+    sub: base ? base+'ResultSub' : 'resultSub',
+    fb: base ? base+'Fb' : 'fb',
+    next: base ? base+'NextBtn' : 'nextBtn'
   };
   const state={idx:0,score:0,answered:false};
   const totalQ=opts.questions.length;
