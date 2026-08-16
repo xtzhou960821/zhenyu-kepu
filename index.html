@@ -325,6 +325,7 @@
   .btn.ai:hover{transform:translateY(-2px);box-shadow:0 6px 26px rgba(34,211,238,.55)}
   .btn.ai:disabled{opacity:.55;cursor:not-allowed;transform:none}
   .draw-hint{text-align:center;color:var(--muted);font-size:13px;margin:6px 0 4px}
+  .draw-model-info{text-align:center;color:var(--muted);font-size:12px;margin:2px 0 4px;opacity:.8;letter-spacing:.3px}
   .review-card{display:none;margin-top:18px;border-radius:16px;padding:22px;
     background:linear-gradient(135deg,rgba(34,211,238,.1),rgba(167,139,250,.12));
     border:1px solid var(--card-border)}
@@ -1335,6 +1336,7 @@
     <div class="lesson">
       <h2><span class="no">🎨</span>珍羽的小画室</h2>
       <p class="sub">用你的小手画出心中的宇宙！画完交给星星老师打分点评哦~</p>
+      <p class="draw-model-info" id="modelInfo" style="display:none"></p>
 
       <div class="draw-wrap">
         <div class="draw-stage">
@@ -2185,6 +2187,16 @@ createQuiz({
   const canvas = document.getElementById('drawCanvas');
   if(!canvas) return;
   const ctx = canvas.getContext('2d');
+
+  // ---- 显示当前点评模型信息 ----
+  const _cfg = (window.ZHENYU_CONFIG || {});
+  const modelInfoEl = document.getElementById('modelInfo');
+  if(modelInfoEl && _cfg.model){
+    let path = _cfg.apiUrl || '';
+    try{ path = new URL(path).host; }catch(_){}
+    modelInfoEl.textContent = '🤖 AI 点评模型：' + _cfg.model + ' · ' + path;
+    modelInfoEl.style.display = 'block';
+  }
 
   // ---- 画布尺寸（高清适配，Retina）----
   const W = 1400, H = 900;            // 逻辑尺寸（4:3）
