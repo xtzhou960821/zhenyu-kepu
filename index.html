@@ -344,7 +344,8 @@
 <script>
   window.ZHENYU_CONFIG = {
     // 画画 AI 点评：直接调用 omlx.cpolar.cn 的 Qwen3.8 视觉模型（无需后端服务）
-    apiUrl: "http://omlx.cpolar.cn/v1",
+    // 注意：GitHub Pages 是 HTTPS，必须用 https://，否则浏览器按"混合内容"拦截明文 http 请求
+    apiUrl: "https://omlx.cpolar.cn/v1",
     model: "Qwen3.8-27B-8bit",
     apiKey: "hkpolyu2004"
   };
