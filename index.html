@@ -343,7 +343,10 @@
 </style>
 <script>
   window.ZHENYU_CONFIG = {
-    apiUrl: "https://during-protective-demand-improve.trycloudflare.com"
+    // 画画 AI 点评：直接调用 omlx.cpolar.cn 的 Qwen3.8 视觉模型（无需后端服务）
+    apiUrl: "http://omlx.cpolar.cn/v1",
+    model: "Qwen3.8-27B-8bit",
+    apiKey: "hkpolyu2004"
   };
 </script>
 </head>
@@ -2177,9 +2180,7 @@ createQuiz({
 <!-- 🎨 画画功能 -->
 <script>
 (function(){
-  // AI 点评后端地址，统一从 ZHENYU_CONFIG 读取；隧道地址更新时只需改顶部配置
-  const API_URL = (window.ZHENYU_CONFIG && window.ZHENYU_CONFIG.apiUrl) || "";
-
+  // 画画 AI 点评：直接调用 omlx Qwen3.8 视觉模型，配置统一在顶部 ZHENYU_CONFIG
   const canvas = document.getElementById('drawCanvas');
   if(!canvas) return;
   const ctx = canvas.getContext('2d');
@@ -2307,33 +2308,63 @@ createQuiz({
     const tc=thumb.getContext('2d'); tc.fillStyle='#fff'; tc.fillRect(0,0,640,th);
     tc.drawImage(canvas,0,0,640,th);
     const b64=thumb.toDataURL('image/jpeg',0.85).split(',')[1];
+    const cfg = (window.ZHENYU_CONFIG || {});
     try{
-      if(!API_URL){
+      if(!cfg.apiUrl || !cfg.model || !cfg.apiKey){
         throw new Error('点评服务暂未配置');
       }
-      const resp=await fetch(API_URL+'/review',{
+      // 直接用 OpenAI 兼容接口调用 Qwen3.8 视觉模型
+      const sysPrompt = '你是“星星老师”，一个温柔又有耐心的美术点评老师。'
+        + '我会给你一张小朋友的画（一张涂鸦/绘画），请你从以下四个维度做评价，'
+        + '并用中文、以孩子能听懂的语气，只返回一个 JSON 对象（不要有任何其他文字或代码块标记）：'
+        + '{"score":<0到100的整数>,"name":"给这幅画起一个可爱贴切的名字","praise":"具体夸奖1-2句","suggestion":"温柔的一句改进小建议","encourage":"一句鼓励的话"}。'
+        + '画面完全空白时，score 给 0 分并鼓励小朋友先画点东西。';
+      const resp=await fetch(cfg.apiUrl+'/chat/completions',{
         method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({image_base64:b64, mime:'image/jpeg'})
+        headers:{
+          'Content-Type':'application/json',
+          'Authorization':'Bearer '+cfg.apiKey
+        },
+        body:JSON.stringify({
+          model:cfg.model,
+          max_tokens:600,
+          messages:[
+            {role:'system',content:sysPrompt},
+            {role:'user',content:[
+              {type:'image_url',image_url:{url:'data:image/jpeg;base64,'+b64}}
+            ]}
+          ]
+        })
       });
-      if(!resp.ok) throw new Error('HTTP '+resp.status);
-      const d=await resp.json();
-      if(!d || typeof d.score!=='number' || !d.name || !d.praise || !d.suggestion || !d.encourage){
-        throw new Error('点评数据不完整');
+      if(!resp.ok){
+        // 尝试读取具体错误
+        let em='';
+        try{ const ej=await resp.json(); em = ej.error && ej.error.message ? ('：'+ej.error.message) : ''; }catch(_){}
+        throw new Error('HTTP '+resp.status+em);
       }
+      const j=await resp.json();
+      const content=(j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content) || '';
+      if(!content) throw new Error('点评数据为空');
+      // 解析模型返回的 JSON（容忍被 ``` 包裹或前后有杂音）
+      let clean=content.trim();
+      clean=clean.replace(/^```(?:json)?\s*/i,'').replace(/```\s*$/,'').trim();
+      const m=clean.match(/\{[\s\S]*\}/);
+      if(!m) throw new Error('点评格式无法解析');
+      const d=JSON.parse(m[0]);
+      const score=Math.max(0,Math.min(100,Math.round(Number(d.score)||0)));
+      if(typeof d.score==='undefined') throw new Error('点评数据不完整');
       // 展示评分 + 点评
-      document.getElementById('revScore').textContent=d.score+'分';
-      let st=''; const sc=d.score||0;
-      st = sc>=90?'⭐⭐⭐⭐⭐':sc>=80?'⭐⭐⭐⭐':sc>=70?'⭐⭐⭐':'⭐⭐';
+      document.getElementById('revScore').textContent=score+'分';
+      let st=''; st = score>=90?'⭐⭐⭐⭐⭐':score>=80?'⭐⭐⭐⭐':score>=70?'⭐⭐⭐':'⭐⭐';
       document.getElementById('revStars').textContent=st;
-      document.getElementById('revName').textContent='🎨 '+d.name;
-      document.getElementById('revPraise').textContent='👍 星星老师的夸奖\n'+d.praise;
-      document.getElementById('revSuggestion').textContent='💡 小建议\n'+d.suggestion;
-      document.getElementById('revEncourage').textContent='💖 '+d.encourage;
+      document.getElementById('revName').textContent='🎨 '+(d.name||'我的画');
+      document.getElementById('revPraise').textContent='👍 星星老师的夸奖\n'+(d.praise||'');
+      document.getElementById('revSuggestion').textContent='💡 小建议\n'+(d.suggestion||'');
+      document.getElementById('revEncourage').textContent='💖 '+(d.encourage||'');
       document.getElementById('reviewCard').classList.add('on');
       window.scrollTo({top:document.getElementById('reviewCard').offsetTop-120,behavior:'smooth'});
     }catch(err){
-      alert('😢 星星老师暂时没收到你的画，可能是网络问题，请稍后再试一次哦！');
+      alert('😢 星星老师暂时没收到你的画，可能是网络问题，请稍后再试一次哦！('+err.message+')');
     }finally{
       btn.disabled=false; loading.style.display='none';
     }
